@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="" />
+    <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,6 +21,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1ntUjt7YZ4wUx9SBnclsfsbh3cj" />
@@ -61,7 +72,8 @@
       <workItem from="1612209020614" duration="127000" />
       <workItem from="1612209164949" duration="1194000" />
       <workItem from="1612722399271" duration="5717000" />
-      <workItem from="1612892365080" duration="2834000" />
+      <workItem from="1612892365080" duration="11876000" />
+      <workItem from="1613072655697" duration="7509000" />
     </task>
     <servers />
   </component>
@@ -82,25 +94,57 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2746" y="417" key="Github.ShareDialog/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612895360466" />
-    <state width="1493" height="282" key="GridCell.Tab.0.bottom" timestamp="1612891685150">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="2643" y="217" key="Github.UntrackedFilesDialog" timestamp="1612895390145">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2643" y="217" key="Github.UntrackedFilesDialog/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612895390145" />
+    <state width="1877" height="220" key="GridCell.Tab.0.bottom" timestamp="1613253469838">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1493" height="282" key="GridCell.Tab.0.center" timestamp="1612891685150">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1877" height="220" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
+    <state width="1877" height="220" key="GridCell.Tab.0.center" timestamp="1613253469838">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1493" height="282" key="GridCell.Tab.0.left" timestamp="1612891685150">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1877" height="220" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
+    <state width="1877" height="220" key="GridCell.Tab.0.left" timestamp="1613253469838">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1493" height="282" key="GridCell.Tab.0.right" timestamp="1612891685150">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state width="1877" height="220" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
+    <state width="1877" height="220" key="GridCell.Tab.0.right" timestamp="1613253469838">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
+    <state width="1877" height="220" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
     <state x="2360" y="94" width="952" height="852" key="SettingsEditor" timestamp="1612816919558">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2360" y="94" width="952" height="852" key="SettingsEditor/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612816919558" />
+    <state x="2579" y="135" width="588" height="888" key="find.popup" timestamp="1613253469459">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2579" y="135" width="588" height="888" key="find.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469459" />
+    <state x="2262" y="203" key="new project wizard" timestamp="1612904619702">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2262" y="203" key="new project wizard/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612904619702" />
+    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1613261043788">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613261043788" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app.js</url>
+          <line>340</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

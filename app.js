@@ -4,14 +4,17 @@ var Lfullscreen = require('leaflet-fullscreen')
 var utils = require('./utils.js');
 var random = require('geojson-random');
 var easybutton = require('leaflet-easybutton');
+var WTF = require("./wtf-trace.js");
+// var data = require("./data.js");
 
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
 /* Base Setup of the Map*/
-performance.mark("sanket-startPageLoad");
 // center of the map
 var center = [40.5853, -105.0844];
+
+console.time("Home");
 
 // Create the map
 var map = L.map('map');
@@ -161,7 +164,7 @@ function getLoadData(num_states){
             dataType: "json",
             success: function (data){
                 console.log(filename + " Retrieved");
-                console.log(data);
+                // console.log(data);
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature
                     })
@@ -251,6 +254,7 @@ function getLoadPoints(num_point_files){
                 //alert(xhr.statusText);
             },
             complete: function(data) {
+                performance.measure("points loaded")
                 if(i === num_point_files){
                     console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
                     console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
@@ -272,6 +276,7 @@ function getLoadShapes(num_shape_files){
             dataType: "json",
             success: function (data){
                 console.log(filename + " Retrieved");
+                performance.mark('Adding Shape Layer to map')
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature,
                         pointToLayer: function (geoJsonPoint,latlng){
@@ -280,7 +285,7 @@ function getLoadShapes(num_shape_files){
                     }
                     )
                 );
-
+                performance.mark('Done Adding Shape Layer to map')
                 updateProps = {
                     name: preplotpoints.length,
                     timestamp: Date.now() - starttime,
@@ -314,104 +319,71 @@ window.getLoadData = getLoadData;
 window.sleep = sleep;
 
 //----------------------------------------
-// 26th Jan 2021
-async function asyncCall(num_point_files=1) {
-    let starttime = Date.now()
-    var major_filename,shapecount;
-    const browser = await puppeteer.launch(); //{headless: false}
-    for(i = 0; i < 3;i++) {
 
-        const context = await browser.createIncognitoBrowserContext();
-        const page = await context.newPage();
-
-        await page.tracing.start({path: './profile_' + i.toString() + '.json'});
-
-        await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
-        // await page.goto('http://localhost:63342/aperture/', {waitUntil: 'load', timeout: 0});
-
-        let x = await page.evaluate((num_point_files) =>{
-                getLoadPoints(num_point_files);
-                // getLoadData(num_point_files);
-                getLoadShapes(num_point_files);
-            },num_point_files
-        );
-        console.log("Lag: " + ((num_point_files/10)*1000).toString())
-        await page.waitFor(1000*(num_point_files/10));
-
-        // //Code to dig into the iframe and select a fire station checkbox
-        // let myFrame;
-        // try{
-        //     for (const frame of page.mainFrame().childFrames()){
-        //         // Here you can use few identifying methods like url(),name(),title()
-        //         if (frame.url().includes ('map2.html')){
-        //             console.log('we found the map2 iframe')
-        //             myFrame = frame
-        //             // we assign this frame to myFrame to use it later
-        //         }
-        //     }
-        //
-        // } catch (error){
-        //     console.log("iframe/element related error" + error.toString());
-        // }
-
-        await page._client.send('Performance.enable');
-        const performanceMetrics = await page._client.send('Performance.getMetrics');
-
-        // const performanceTiming = JSON.parse(
-        //     await page.evaluate(() => JSON.stringify(window.performance.timing))
-        // );
-        const performanceTiming = await page.evaluate(() => JSON.stringify(window.performance.timing));
-        let perfvar = {}
-        perfvar.performanceTiming = performanceTiming
-        let perfJSON = JSON.parse(JSON.stringify(perfvar));
-
-        await page.tracing.stop();
-
-        try{
-            shapecount = await page.evaluate(() => {
-                var x = document.getElementsByClassName("legend");
-                shapecount = x[0].innerHTML.split(",")[0].split('>')[3];
-                return shapecount;
-            });
-            console.log( "Shape count: ", shapecount);
-            major_filename = shapecount == ""?'loadsof':shapecount.toString() + '-state-metrics'; ///Remember to change filename so that older records are not overwritten
-        }catch (err){
-            console.log(err.message);
-            continue;
-        }
-
-        await context.close();
-
-        const metrics = tracealyzer('./profile_' + i.toString() + '.json');
-
-        const filename = major_filename + '_run_' + i.toString() +'_' + Date.now().toString() + '.json';
-        var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
-        var result = mergeJSON.merge(metrics,performanceMetrics)
-        var result = mergeJSON.merge(result,perfJSON)
-        stream1.write(JSON.stringify(result));
-        stream1.close();
-
-        console.log("Time Taken for " + i.toString() + "th run for "+ shapecount +": ", Date.now() - starttime)
-    }
-    await browser.close();
-    return 1;
-};
-
-L.easyButton({
+WTF.trace.start();
+var mybtn = L.easyButton({
     position: 'topleft',
     leafletClasses: true,
     states: [{
         stateName: 'center',
         onClick: function(btn, map){
-            performance.mark("sanket-getLoadDataStart");
+            // performance.mark("sanket-getLoadDataStart");
+            console.profile("MeME")
+            console.time("getLoadData")
             getLoadData(5);
             // getLoadShapes(1);
             getLoadPoints(3);
-            performance.mark("sanket-getLoadDataEnd");
+            // performance.mark("sanket-getLoadDataEnd");
+            clicked(this);
+            console.timeEnd("getLoadData");
+            console.profileEnd();
         },
         title: 'Performance',
         icon: '<img src="images/performance.svg">'
     }]
-}).addTo(map);
+}) //.addTo(map);
+mybtn.addTo(map);
 
-performance.mark("sanket-endPageLoad");
+var observer = new PerformanceObserver(list => {
+    list.getEntries().forEach(entry => {
+        // Display each reported measurement on console
+        // if (console) {
+        //     console.log("Name: "       + entry.name      +
+        //         ", Type: "     + entry.entryType +
+        //         ", Start: "    + entry.startTime +
+        //         ", Duration: " + entry.duration  + "\n");
+        //     // console.log(entry);
+        //
+        // }
+    })
+});
+//observer.observe({entryTypes: ['resource', 'mark', 'measure','navigation']});
+performance.mark('registered-observer');
+
+function clicked(elem) {
+    performance.measure('button clicked');
+}
+
+console.timeEnd("Home");
+// Navigation Timing collects performance metrics for HTML documents.
+// Resource Timing collects performance metrics for document-dependent resources. Stuff like style sheets, scripts, images, et cetera.
+
+// (function() {
+//     var script = document.createElement('script');
+//     script.src = 'https://unpkg.com/web-vitals';
+//     script.onload = function() {
+//         // When loading `web-vitals` using a classic script, all the public
+//         // methods can be found on the `webVitals` global namespace.
+//         webVitals.getCLS(console.log);
+//         webVitals.getTTFB(console.log);
+//         webVitals.getFCP(console.log);
+//         webVitals.getLCP(console.log);
+//
+//     }
+//     document.head.appendChild(script);
+// }())
+
+console.log(performance.timing);
+
+console.log(utils.network_perf_info());
+

@@ -125,10 +125,37 @@ const supportedFeatures = () => {
         entry.durationTotal = (entry.durationTotal||0) + currR.duration;
     });
 
+    //Request counts
+    data.hostRequests = data.requestsOnly
+        .filter((domain) => domain.domain === location.host).length;
+
+    data.currAndSubdomainRequests = data.requestsOnly
+        .filter((domain) => domain.domain.split(".").slice(-2).join(".") === location.host.split(".").slice(-2).join("."))
+        .length;
+
+    data.crossDocDomainRequests = data.requestsOnly
+        .filter((domain) => !helper.endsWith(domain.domain, document.domain)).length;
+
+    data.hostSubdomains = data.requestsByDomain
+        .filter((domain) => helper.endsWith(domain.domain, location.host.split(".").slice(-2).join(".")) && domain.domain !== location.host)
+        .length;
 
 
+    data.slowestCalls = [];
+    data.average = undefined;
 
+    if(data.allResourcesCalc.length > 0){
+        data.slowestCalls = data.allResourcesCalc
+            .filter((a) => a.name !== location.href)
+            .sort((a, b) => b.duration - a.duration);
 
+        data.average = Math.floor(data.slowestCalls.reduceRight((a,b) => {
+            if(typeof a !== "number"){
+                return a.duration + b.duration
+            }
+            return a + b.duration;
+        }) / data.slowestCalls.length);
+    }
 
 })();
 
