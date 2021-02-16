@@ -1,4 +1,5 @@
 var L = require('leaflet')
+var webVitals = require('web-vitals');
 // var MiniMap = require('leaflet-minimap');
 // var main = require('./app.js')
 
@@ -149,3 +150,29 @@ function network_performance_timings() {
 }
 
 exports.network_perf_info = network_performance_timings;
+
+function memory_performance_info() {
+    var p = {};
+
+    if(performance.memory) {
+        p.jsHeapSizeLimit = performance.memory.jsHeapSizeLimit;
+        p.totalJSHeapSize = performance.memory.totalJSHeapSize;
+        p.usedJSHeapSize = performance.memory.usedJSHeapSize;
+    }
+    return p;
+}
+
+exports.memory_performance_info = memory_performance_info;
+
+function get_web_vitals() {
+    var p = {};
+    console.log("web-vitals:");
+    webVitals.getTTFB((metric) => {p.TTFB = metric;  console.log(metric)});
+    webVitals.getFCP((metric) => {p.FCP = metric;  console.log(metric)});
+    webVitals.getCLS((metric) => {p.CLS = metric;  console.log(metric)});
+    webVitals.getLCP((metric) => {p.LCP = metric;  console.log(metric)});
+    webVitals.getFID((metric) => {p.FID = metric;  console.log(metric)});
+    return p;
+}
+
+exports.get_web_vitals = get_web_vitals;

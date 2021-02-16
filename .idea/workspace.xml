@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,6 +69,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="ts.external.directory.path" value="D:\Program Files\JetBrains\IntelliJ IDEA 2020.2.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="js.build_tools.npm">
@@ -73,12 +95,35 @@
       <workItem from="1612209164949" duration="1194000" />
       <workItem from="1612722399271" duration="5717000" />
       <workItem from="1612892365080" duration="11876000" />
-      <workItem from="1613072655697" duration="7509000" />
+      <workItem from="1613072655697" duration="22845000" />
     </task>
+    <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
+      <created>1613262394076</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1613262394076</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)" />
+    <option name="LAST_COMMIT_MESSAGE" value="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612816962230">
@@ -98,53 +143,53 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2643" y="217" key="Github.UntrackedFilesDialog/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612895390145" />
-    <state width="1877" height="220" key="GridCell.Tab.0.bottom" timestamp="1613253469838">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="1493" height="163" key="GridCell.Tab.0.bottom" timestamp="1613505233560">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
-    <state width="1877" height="220" key="GridCell.Tab.0.center" timestamp="1613253469838">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="220" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
+    <state width="1493" height="163" key="GridCell.Tab.0.center" timestamp="1613505233560">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
-    <state width="1877" height="220" key="GridCell.Tab.0.left" timestamp="1613253469838">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="220" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
+    <state width="1493" height="163" key="GridCell.Tab.0.left" timestamp="1613505233560">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
-    <state width="1877" height="220" key="GridCell.Tab.0.right" timestamp="1613253469838">
-      <screen x="1920" y="0" width="1920" height="1040" />
+    <state width="1877" height="220" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
+    <state width="1493" height="163" key="GridCell.Tab.0.right" timestamp="1613505233560">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state width="1493" height="282" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469838" />
+    <state width="1877" height="220" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
     <state x="2360" y="94" width="952" height="852" key="SettingsEditor" timestamp="1612816919558">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2360" y="94" width="952" height="852" key="SettingsEditor/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612816919558" />
-    <state x="2579" y="135" width="588" height="888" key="find.popup" timestamp="1613253469459">
+    <state x="2472" y="252" key="Vcs.Push.Dialog.v2" timestamp="1613269574327">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2579" y="135" width="588" height="888" key="find.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613253469459" />
+    <state x="2472" y="252" key="Vcs.Push.Dialog.v2/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613269574327" />
+    <state x="2579" y="135" width="588" height="888" key="find.popup" timestamp="1613270182498">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2579" y="135" width="588" height="888" key="find.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613270182498" />
     <state x="2262" y="203" key="new project wizard" timestamp="1612904619702">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2262" y="203" key="new project wizard/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612904619702" />
-    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1613261043788">
+    <state x="425" y="187" key="run.anything.popup" timestamp="1613285364659">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="425" y="187" key="run.anything.popup/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1613285364659" />
+    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1613339465433">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613261043788" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app.js</url>
-          <line>340</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613339465433" />
   </component>
 </project>

@@ -4,7 +4,7 @@ var Lfullscreen = require('leaflet-fullscreen')
 var utils = require('./utils.js');
 var random = require('geojson-random');
 var easybutton = require('leaflet-easybutton');
-var WTF = require("./wtf-trace.js");
+// var tf = require('@tensorflow/tfjs');
 // var data = require("./data.js");
 
 
@@ -226,6 +226,7 @@ function getGeneratePoints(num_points) {
 function getLoadPoints(num_point_files){
     var points = [];
     const starttime = Date.now();
+    performance.mark("all points: loading");
     for(i = 1 ; i <= num_point_files; i++){
         let filename='points_run_'+ i.toString()+'.json';
         points[i] = $.ajax({
@@ -233,6 +234,7 @@ function getLoadPoints(num_point_files){
             dataType: "json",
             success: function (data){
                 console.log(filename + " Retrieved");
+                performance.mark("one point file: adding to map");
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature,
                         pointToLayer: function (geoJsonPoint,latlng){
@@ -241,6 +243,7 @@ function getLoadPoints(num_point_files){
                     }
                     )
                 );
+                performance.mark("one point file: loaded and added to map");
 
                 updateProps = {
                     name: preplotpoints.length,
@@ -254,8 +257,8 @@ function getLoadPoints(num_point_files){
                 //alert(xhr.statusText);
             },
             complete: function(data) {
-                performance.measure("points loaded")
-                if(i === num_point_files){
+                performance.mark("all points: loaded")
+                if(i === num_point_files-1){
                     console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
                     console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
                 }
@@ -269,6 +272,7 @@ function getLoadPoints(num_point_files){
 function getLoadShapes(num_shape_files){
     var shapes = [];
     const starttime = Date.now();
+    performance.mark("all shapes: loading");
     for(i = 1 ; i <= num_shape_files; i++){
         let filename='pentagons_run_' + i.toString() + '.json' //petagons_run_'+ i.toString()+'.json';
         shapes[i] = $.ajax({
@@ -279,9 +283,6 @@ function getLoadShapes(num_shape_files){
                 performance.mark('Adding Shape Layer to map')
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature,
-                        pointToLayer: function (geoJsonPoint,latlng){
-                            return L.circle(latlng);
-                        }
                     }
                     )
                 );
@@ -320,70 +321,115 @@ window.sleep = sleep;
 
 //----------------------------------------
 
-WTF.trace.start();
 var mybtn = L.easyButton({
+    id: "random_data_puller",
     position: 'topleft',
     leafletClasses: true,
     states: [{
         stateName: 'center',
         onClick: function(btn, map){
-            // performance.mark("sanket-getLoadDataStart");
             console.profile("MeME")
             console.time("getLoadData")
-            getLoadData(5);
-            // getLoadShapes(1);
-            getLoadPoints(3);
-            // performance.mark("sanket-getLoadDataEnd");
             clicked(this);
             console.timeEnd("getLoadData");
             console.profileEnd();
         },
         title: 'Performance',
-        icon: '<img src="images/performance.svg">'
+        icon: '<img src="images/performance.svg">',
     }]
-}) //.addTo(map);
-mybtn.addTo(map);
+}).addTo(map);
+
+document.getElementById("random_data_puller").click();
+
+var network_events_dict = {}
+var num_events = 0;
 
 var observer = new PerformanceObserver(list => {
     list.getEntries().forEach(entry => {
-        // Display each reported measurement on console
+        //Display each reported measurement on console
         // if (console) {
-        //     console.log("Name: "       + entry.name      +
+        //     console.log("resource - observer - Name: "       + entry.name      +
         //         ", Type: "     + entry.entryType +
         //         ", Start: "    + entry.startTime +
         //         ", Duration: " + entry.duration  + "\n");
         //     // console.log(entry);
-        //
-        // }
+        // };
+        network_events_dict[num_events++] = entry;
     })
 });
-//observer.observe({entryTypes: ['resource', 'mark', 'measure','navigation']});
+window.mydict = network_events_dict;
+observer.observe({entryTypes: ['resource','navigation']});
 performance.mark('registered-observer');
 
+var measureEventDict = {};
+var measureEventCount = 0;
+
+var measureObserver = new PerformanceObserver(list => {
+    list.getEntries().forEach(entry =>{
+        // if(console){
+        //     console.log("mark - measure - observer - Name: "       + entry.name      +
+        //         ", Type: "     + entry.entryType +
+        //         ", Start: "    + entry.startTime +
+        //         ", Duration: " + entry.duration  + "\n");
+        // }
+        measureEventDict[measureEventCount++] = entry;
+    })
+});
+window.mymeasuredict = measureEventDict;
+measureObserver.observe({entryTypes: ['mark','measure']});
+
+
+
+
 function clicked(elem) {
+    getLoadData(5);
+    // getLoadShapes(1);
+    getLoadPoints(3);
     performance.measure('button clicked');
+    console.log("Page Load timings Info");
+    console.log(utils.network_perf_info());
+    console.log(utils.get_web_vitals());
+    console.log("Network Connection Information! : ");
+    console.log(navigator.connection);
 }
 
 console.timeEnd("Home");
 // Navigation Timing collects performance metrics for HTML documents.
 // Resource Timing collects performance metrics for document-dependent resources. Stuff like style sheets, scripts, images, et cetera.
 
-// (function() {
-//     var script = document.createElement('script');
-//     script.src = 'https://unpkg.com/web-vitals';
-//     script.onload = function() {
-//         // When loading `web-vitals` using a classic script, all the public
-//         // methods can be found on the `webVitals` global namespace.
-//         webVitals.getCLS(console.log);
-//         webVitals.getTTFB(console.log);
-//         webVitals.getFCP(console.log);
-//         webVitals.getLCP(console.log);
-//
-//     }
-//     document.head.appendChild(script);
-// }())
 
-console.log(performance.timing);
+//Network Connection Information API
+var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+var type = connection.effectiveType;
 
-console.log(utils.network_perf_info());
+function updateConnectionStatus() {
+    console.log("Connection type changed from " + type + " to " + connection.effectiveType);
+    type = connection.effectiveType;
+}
+
+connection.addEventListener('change', updateConnectionStatus);
+
+// //JQuery to detect is DOM is completely loaded to save this data into a dataset.
+// $( document ).ready(function() {
+//     console.log( "ready!" );
+// });
+
+
+//Data Structure to hold all my features plus their outputs
+var x = document.getElementsByClassName("legend");
+var shapecount = x[0].innerHTML.split(",")[0].split('>')[3];
+var resourceLoadingSum = performance.getEntriesByType('resource').forEach(entry => {
+
+})
+myWebvitals = utils.get_web_vitals();
+
+mydata = {
+    x: [[myWebvitals.FCP, myWebvitals.TTFB, connection.effectiveType,connection.downlink]],
+    y: [shapecount]
+}
+console.log("mydataframe");
+console.log(mydata);
+
+
+
 
