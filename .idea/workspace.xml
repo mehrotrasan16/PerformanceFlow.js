@@ -23,10 +23,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app_backup-16Feb21.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,6 +70,11 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="ts.external.directory.path" value="D:\Program Files\JetBrains\IntelliJ IDEA 2020.2.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Temp\benchmarkingBD\leaflet-webapp" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration default="true" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/package.json" />
@@ -95,7 +99,9 @@
       <workItem from="1612209164949" duration="1194000" />
       <workItem from="1612722399271" duration="5717000" />
       <workItem from="1612892365080" duration="11876000" />
-      <workItem from="1613072655697" duration="22845000" />
+      <workItem from="1613072655697" duration="29260000" />
+      <workItem from="1613694326714" duration="1287000" />
+      <workItem from="1613949287594" duration="1669000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -104,7 +110,14 @@
       <option name="project" value="LOCAL" />
       <updated>1613262394076</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="backup commit.">
+      <created>1613508475276</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1613508475276</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,16 +133,22 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)" />
-    <option name="LAST_COMMIT_MESSAGE" value="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)" />
+    <MESSAGE value="backup commit." />
+    <option name="LAST_COMMIT_MESSAGE" value="backup commit." />
   </component>
   <component name="WindowStateProjectService">
     <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612816962230">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2334" y="174" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612816962230" />
+    <state x="2560" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1613949313982">
+      <screen x="1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="2560" y="255" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613949313982" />
     <state x="2606" y="211" key="FileChooserDialogImpl" timestamp="1612894466385">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
@@ -143,29 +162,29 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2643" y="217" key="Github.UntrackedFilesDialog/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612895390145" />
-    <state width="1493" height="163" key="GridCell.Tab.0.bottom" timestamp="1613505233560">
+    <state width="1493" height="163" key="GridCell.Tab.0.bottom" timestamp="1613753604753">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="282" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1613753604753" />
+    <state width="1493" height="163" key="GridCell.Tab.0.bottom/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613606388476" />
     <state width="1493" height="163" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
-    <state width="1493" height="163" key="GridCell.Tab.0.center" timestamp="1613505233560">
+    <state width="1493" height="163" key="GridCell.Tab.0.center" timestamp="1613753604753">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="282" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1613753604753" />
+    <state width="1493" height="163" key="GridCell.Tab.0.center/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613606388476" />
     <state width="1493" height="163" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
-    <state width="1493" height="163" key="GridCell.Tab.0.left" timestamp="1613505233560">
+    <state width="1493" height="163" key="GridCell.Tab.0.left" timestamp="1613753604753">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="282" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1613753604753" />
+    <state width="1493" height="163" key="GridCell.Tab.0.left/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613606388475" />
     <state width="1493" height="163" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
-    <state width="1493" height="163" key="GridCell.Tab.0.right" timestamp="1613505233560">
+    <state width="1493" height="163" key="GridCell.Tab.0.right" timestamp="1613753604753">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="1493" height="282" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1612891685150" />
-    <state width="1877" height="220" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613262404937" />
+    <state width="1493" height="163" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1613753604753" />
+    <state width="1493" height="163" key="GridCell.Tab.0.right/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1613606388476" />
     <state width="1493" height="163" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1613505233560" />
     <state x="2360" y="94" width="952" height="852" key="SettingsEditor" timestamp="1612816919558">
       <screen x="1920" y="0" width="1920" height="1040" />
@@ -183,10 +202,11 @@
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>
     <state x="2262" y="203" key="new project wizard/0.0.1536.824/1920.0.1920.1040@1920.0.1920.1040" timestamp="1612904619702" />
-    <state x="425" y="187" key="run.anything.popup" timestamp="1613285364659">
+    <state x="425" y="187" key="run.anything.popup" timestamp="1613508827934">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="187" key="run.anything.popup/0.0.1536.824/1920.0.1920.1040@0.0.1536.824" timestamp="1613285364659" />
+    <state x="425" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1613508827934" />
     <state x="2543" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1613339465433">
       <screen x="1920" y="0" width="1920" height="1040" />
     </state>

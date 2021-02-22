@@ -167,11 +167,21 @@ exports.memory_performance_info = memory_performance_info;
 function get_web_vitals() {
     var p = {};
     console.log("web-vitals:");
-    webVitals.getTTFB((metric) => {p.TTFB = metric;  console.log(metric)});
-    webVitals.getFCP((metric) => {p.FCP = metric;  console.log(metric)});
-    webVitals.getCLS((metric) => {p.CLS = metric;  console.log(metric)});
-    webVitals.getLCP((metric) => {p.LCP = metric;  console.log(metric)});
-    webVitals.getFID((metric) => {p.FID = metric;  console.log(metric)});
+    webVitals.getTTFB((metric) => {p.TTFB = metric;
+    //console.log(metric)
+    });
+    webVitals.getFCP((metric) => {p.FCP = metric;
+    //console.log(metric)
+    });
+    webVitals.getCLS((metric) => {p.CLS = metric;
+    //console.log(metric)
+    });
+    webVitals.getLCP((metric) => {p.LCP = metric;
+    //console.log(metric)
+    });
+    webVitals.getFID((metric) => {p.FID = metric;
+    //console.log(metric)
+    });
     return p;
 }
 
