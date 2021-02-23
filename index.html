@@ -14,10 +14,29 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script async defer id="github-bjs" src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 
 </head>
 <body>
 <div id="map"></div>
 <script src="dist/bundle.js"></script>
+<style>
+    svg {
+        font: 12px sans-serif;
+        text-anchor: middle;
+    }
+
+    rect {
+        stroke: lightgray;
+        stoke-width: 1px;
+        fill: none;
+    }
+
+    .y.axis path{
+        fill: none;
+        stroke: none;
+    }
+
+</style>
 </body>
 </html>

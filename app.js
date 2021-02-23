@@ -4,6 +4,10 @@ var Lfullscreen = require('leaflet-fullscreen')
 var utils = require('./utils.js');
 var random = require('geojson-random');
 var easybutton = require('leaflet-easybutton');
+// const d3 = require('d3');
+const Cookies = require('js-cookie'); //assign module to variable called "Cookies"
+
+
 
 // var tf = require('@tensorflow/tfjs');
 // var data = require("./data.js");
@@ -412,8 +416,10 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                         console.log(localmydata);
                                         localmydata.then(function(res) {
                                             window.mycorr = utils.calculateCorrelation(res.x);
-                                            console.log(window.mycorr);
-                                        })
+                                            var json_str = JSON.stringify(window.mycorr);
+                                            Cookies.set('mycorr', json_str);
+                                            // console.log(window.mycorr);
+                                        });
                                         // setTimeout(() => {
                                         //     console.log(utils.calculateCorrelation.bind(localmydata.x)());
                                         // }, 3000);
@@ -442,6 +448,15 @@ window.getLoadShapes = getLoadShapes;
 window.getLoadData = getLoadData;
 window.sleep = sleep;
 
+//----------------------------------------
+//Network Connection Information API
+var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+var type = connection.effectiveType;
+function updateConnectionStatus() {
+    console.log("Connection type changed from " + type + " to " + connection.effectiveType);
+    type = connection.effectiveType;
+}
+connection.addEventListener('change', updateConnectionStatus);
 //----------------------------------------
 
 var mybtn = L.easyButton({
@@ -481,23 +496,11 @@ async function clicked(elem) {
     console.log(navigator.connection);
 }
 
-
-//Network Connection Information API
-var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-var type = connection.effectiveType;
-function updateConnectionStatus() {
-    console.log("Connection type changed from " + type + " to " + connection.effectiveType);
-    type = connection.effectiveType;
-}
-connection.addEventListener('change', updateConnectionStatus);
-
-
 //Data Structure to hold all my features plus their outputs
 var mydata = {
     x: [],
     y: []
 }
-
 
 async function mypagefn() {
     var x = await document.getElementsByClassName("legend");
@@ -544,7 +547,7 @@ async function mypagefn() {
     }
 
 
-    mydata.x.push([resourceLoadingSum,xmlHttpRequestLoadingSum,totalDataDownloaded,EffectiveConnectionTypeDict[connection.effectiveType],connection.downlink, mypageMemoryData.totalJSHeapSize, mypageMemoryData.usedJSHeapSize]); //mypageLoadInfo, myWebvitals
+    mydata.x.push([resourceLoadingSum,xmlHttpRequestLoadingSum,totalDataDownloaded,EffectiveConnectionTypeDict[connection.effectiveType],connection.downlink, mypageMemoryData.usedJSHeapSize/mypageMemoryData.totalJSHeapSize]); //mypageLoadInfo, myWebvitals
     mydata.y.push(shapecount);
 
     // console.log("mydataframe");
@@ -555,9 +558,6 @@ async function mypagefn() {
     return mydata;
 }
 
-
-// document.getElementById("random_data_puller").click();
-
 //-------------------------------------------------
 var corrBtn = L.easyButton({
     id: "corrButton",
@@ -567,16 +567,52 @@ var corrBtn = L.easyButton({
         stateName: 'center',
         onClick: function(btn, map){
             // create popup contents
-            alert(window.mycorr);
+            // drawCorrelogram(window.mycorr);
+            // alert(window.mycorr);
+            var matrix = JSON.parse(Cookies.get('mycorr'));
+            var cols = ["resourceLoad","dataLoad","totalData","connType","connMaxSpeed","jsHeapRatio"];
+            // matrix.unshift(cols);
+            // for(i = 1 ; i < matrix.length; i++){
+            //     matrix[i].unshift(cols[i]);
+            // }
+            // console.log(matrix);
+            var json_str = JSON.stringify(matrix);
+            Cookies.set('mycorr', json_str);
+            utils.drawCorrelogram('mycorr');
         },
         title: 'Correlation Graph',
-        icon: '<img src="images/chart-line-solid.svg">',
+        icon: '<i>☈</i>',
     }]
 }).addTo(map);
-function drawCorrelogram(){
 
-}
+document.getElementById("random_data_puller").click();
+document.getElementById("corrButton").click();
 
+// Cookie Code from stack overflow------------------------------
+// https://stackoverflow.com/questions/4470477/create-array-in-cookie-with-javascript/62686800#62686800
+// cookie = {
+//     set: function(name, value) {
+//         if(document.cookie === ""){
+//             document.cookie = name+"="+value+";";
+//         }else{
+//             cstring = name + "=" + value.toString() + ";"
+//             document.cookie += cstring;
+//         }
+//     },
+//     get: function(name) {
+//         cookies = document.cookie;
+//         r = cookies.split(';').reduce(function(acc, item){
+//             let c = item.split('='); //'nome=Marcelo' transform in Array[0] = 'nome', Array[1] = 'Marcelo'
+//             if(c[0] === name){
+//                 c[0] = c[0].replace(' ', ''); //remove white space from key cookie
+//                 acc[c[0]] = c[1]; //acc == accumulator, he accomulates all data, on ends, return to r variable
+//                 return acc; //here do not return to r variable, here return to accumulator
+//             }
+//         },[]);
+//
+//         return r;
+//     }
+// };
 
 //-------------------------------------------------
 // But with the Performance APIs, we can get real user measurement (RUM) in production.
