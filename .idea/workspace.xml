@@ -24,12 +24,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/chart-line-solid.svg" beforeDir="false" afterPath="$PROJECT_DIR$/images/chart-line-solid.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app-backup-21Feb21.js" beforeDir="false" afterPath="$PROJECT_DIR$/backups/app-backup-21Feb21.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app_backup-16Feb21.js" beforeDir="false" afterPath="$PROJECT_DIR$/backups/app_backup-16Feb21.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +74,9 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Temp\benchmarkingBD\leaflet-webapp" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Temp\benchmarkingBD\leaflet-webapp\backups" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="js.build_tools.npm">
@@ -106,7 +105,7 @@
       <workItem from="1613072655697" duration="29260000" />
       <workItem from="1613694326714" duration="1287000" />
       <workItem from="1613949287594" duration="14107000" />
-      <workItem from="1613970092145" duration="29532000" />
+      <workItem from="1613970092145" duration="29624000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -136,7 +135,14 @@
       <option name="project" value="LOCAL" />
       <updated>1614055123559</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added Correlogram matrix diagram client side to show correlations of features.&#10;moved it into utils.js to try to keep the app.js clean.">
+      <created>1614107925303</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1614107925303</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -159,6 +165,7 @@
     <MESSAGE value="backup commit." />
     <MESSAGE value="Added mypagefn() to capture events and store in a feature wise format.&#10;Added a getCompoundData() to download shapes, points and tracts in a sequential manner, so that I can call mypagefn() at the end of each ajax call to capture information about the loading and scripting information of all data files.&#10;Backed up app.js in app_backup-16Feb21.js&#10;added network information capture code and page-load information capture in two functions in utils.js: memory_performance_info, network_performance_timings and get_web_vitals." />
     <MESSAGE value="Rachit Bhais epic fix to get the matix values into the correlation function. God Bless him.&#10;Now have a corr matrix! will plot it into a corrgram. Added a button to show/hide corr-matrx onclick in a popup. maybe later moveit into a custom leaflet control.&#10;Added Tf.js, node-correlation for correlation matrix. and d3 for graphs.&#10;Added fontawesome icons for new button" />
-    <option name="LAST_COMMIT_MESSAGE" value="Rachit Bhais epic fix to get the matix values into the correlation function. God Bless him.&#10;Now have a corr matrix! will plot it into a corrgram. Added a button to show/hide corr-matrx onclick in a popup. maybe later moveit into a custom leaflet control.&#10;Added Tf.js, node-correlation for correlation matrix. and d3 for graphs.&#10;Added fontawesome icons for new button" />
+    <MESSAGE value="Added Correlogram matrix diagram client side to show correlations of features.&#10;moved it into utils.js to try to keep the app.js clean." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Correlogram matrix diagram client side to show correlations of features.&#10;moved it into utils.js to try to keep the app.js clean." />
   </component>
 </project>
