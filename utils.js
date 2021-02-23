@@ -1,5 +1,6 @@
 var L = require('leaflet')
 var webVitals = require('web-vitals');
+var correlation = require('node-correlation');
 // var MiniMap = require('leaflet-minimap');
 // var main = require('./app.js')
 
@@ -186,3 +187,31 @@ function get_web_vitals() {
 }
 
 exports.get_web_vitals = get_web_vitals;
+
+function calculateCorrelation(matrix){
+    if(!matrix){
+        console.log("undefined matrix")
+        return;
+    }
+    // console.log("here");
+    // console.log(matrix);
+    const correlations = [];
+    for(let numColumn = 0; numColumn < matrix[0].length; numColumn ++) {
+        const rowCorrelations = [];
+        for(let numColumn2 = 0; numColumn2 < matrix[0].length; numColumn2 ++) {
+            const array1 = [];
+            const array2 = [];
+            for(let index in matrix) {
+                array1.push(matrix[index][numColumn]);
+                array2.push(matrix[index][numColumn2]);
+            }
+            const correlationValue = correlation.calc(array1, array2);
+            rowCorrelations.push(correlationValue);
+        }
+        correlations.push(rowCorrelations);
+    }
+
+    return correlations;
+}
+
+exports.calculateCorrelation = calculateCorrelation;

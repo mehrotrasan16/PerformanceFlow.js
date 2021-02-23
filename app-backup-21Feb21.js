@@ -4,7 +4,6 @@ var Lfullscreen = require('leaflet-fullscreen')
 var utils = require('./utils.js');
 var random = require('geojson-random');
 var easybutton = require('leaflet-easybutton');
-
 // var tf = require('@tensorflow/tfjs');
 // var data = require("./data.js");
 
@@ -307,7 +306,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
     var shapes = [];
 
     const starttime = Date.now();
-    performance.mark("all data: loading");
+    performance.mark("all shapes: loading");
     for(i = 1 ; i <= numShapes; i++){
         let filename='pentagons_run_' + i.toString() + '.json' //petagons_run_'+ i.toString()+'.json';
         shapes[i] = $.ajax({
@@ -316,14 +315,13 @@ async function getCompoundData(numPoints, numShapes, numTracts){
             success: function (data){
                 console.log(filename + " Retrieved");
                 // console.log(shapes)
-                performance.mark('Start: Adding Shape Layer ' +i +' to map');
+                performance.mark('Adding Shape Layer to map');
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature,
                     }
                     )
                 );
-                performance.mark('Done: Adding Shape Layer ' +i +' to map');
-                performance.measure('Shape Layer ' + i + ' Scripting:', 'Start: Adding Shape Layer ' +i +' to map', 'Done: Adding Shape Layer ' +i+' to map');
+                performance.mark('Done Adding Shape Layer to map');
                 updateProps = {
                     name: preplotpoints.length,
                     timestamp: Date.now() - starttime,
@@ -337,9 +335,10 @@ async function getCompoundData(numPoints, numShapes, numTracts){
             },
             complete: function(data) {
                 mypagefn();
+
                 var points = [];
                 const starttime = Date.now();
-                // performance.mark("all points: loading");
+                performance.mark("all points: loading");
                 for(i = 1 ; i <= numPoints; i++){
                     let filename='points_run_'+ i.toString()+'.json';
                     points[i] = $.ajax({
@@ -347,7 +346,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                         dataType: "json",
                         success: function (data){
                             console.log(filename + " Retrieved");
-                            performance.mark("Start: Adding Point Layer " +i +" to map");
+                            performance.mark("one point file: adding to map");
                             editableLayers.addLayer(L.geoJSON(data,{
                                     onEachFeature: onEachFeature,
                                     pointToLayer: function (geoJsonPoint,latlng){
@@ -356,8 +355,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                 }
                                 )
                             );
-                            performance.mark('Done: Adding Point Layer ' +i +' to map'); //Loading and Adding done for one data file.
-                            performance.measure('Point Layer ' + i + ' Scripting:', 'Start: Adding Point Layer ' +i+' to map', 'Done: Adding Point Layer ' +i +' to map');
+                            performance.mark("one point file: loaded and added to map");
 
                             updateProps = {
                                 name: preplotpoints.length,
@@ -387,13 +385,10 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                         console.log(filename + " Retrieved");
                                         // console.log(stateshapes[i]);
                                         // console.log(data);
-                                        performance.mark("Start: Adding Tract Layer " +i +" to map");
                                         editableLayers.addLayer(L.geoJSON(data,{
                                                 onEachFeature: onEachFeature
                                             })
                                         );
-                                        performance.mark("Done: Adding Tract Layer " +i +" to map");
-                                        performance.measure('Tract Layer ' + i + ' Scripting:', 'Start: Adding Tract Layer ' +i+' to map', 'Done: Adding Tract Layer ' +i +' to map');
 
                                         updateProps = {
                                             name: preplotpoints.length,
@@ -406,17 +401,9 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                         console.log(xhr.statusText);
                                         //alert(xhr.statusText);
                                     },
-                                    complete: function (data) {
+                                    complete: function(data) {
                                         performance.mark("tracts Loaded")
-                                        localmydata = mypagefn(); //returns a promise.
-                                        console.log(localmydata);
-                                        localmydata.then(function(res) {
-                                            window.mycorr = utils.calculateCorrelation(res.x);
-                                            console.log(window.mycorr);
-                                        })
-                                        // setTimeout(() => {
-                                        //     console.log(utils.calculateCorrelation.bind(localmydata.x)());
-                                        // }, 3000);
+                                        mypagefn();
                                     }
                                 })
                             }
@@ -458,9 +445,6 @@ var mybtn = L.easyButton({
             getCompoundData(1,1,3);
             console.timeEnd("getLoadData");
             console.profileEnd();
-            console.log("mydataframe");
-            console.log(mydata)
-
         },
         title: 'Performance',
         icon: '<img src="images/performance.svg">',
@@ -493,16 +477,16 @@ connection.addEventListener('change', updateConnectionStatus);
 
 
 //Data Structure to hold all my features plus their outputs
-var mydata = {
+mydata = {
     x: [],
     y: []
 }
-
 
 async function mypagefn() {
     var x = await document.getElementsByClassName("legend");
     var shapecount = await x[0].innerHTML.split(",")[0].split('>')[3];
     console.log(shapecount);
+    mydata.y.push(shapecount);
 
     //Total Loading time of all resources, including XMLHTTPRequests
     var resourceLoadingSum = 0;
@@ -519,66 +503,35 @@ async function mypagefn() {
     mypageMemoryData = await utils.memory_performance_info();
 
     var EffectiveConnectionTypeDict = {
-            "2g":2,
+        "2g":2,
             "3g":3,
             "4g":4,
             "slow-2g":1
     };
 
     var totalDataDownloaded = 0;
-    if(window.stateshapes){
-        window.stateshapes.forEach(function(ajaxobject) {
-            totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
-        });
-    }
-    if(window.pointshapes){
-        pointshapes.forEach(function(ajaxobject) {
-            totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
-        });
-    }
+    stateshapes.forEach(function(ajaxobject) {
+        totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
+    });
+    pointshapes.forEach(function(ajaxobject) {
+        totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
+    });
+    stateshapes.forEach(function(ajaxobject) {
+        totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
+    });
 
-    if(window.pentshapes){
-        window.pentshapes.forEach(function(ajaxobject) {
-            totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
-        });
-    }
+    mydata.x.push([resourceLoadingSum,xmlHttpRequestLoadingSum,totalDataDownloaded,EffectiveConnectionTypeDict[connection.effectiveType],connection.downlink,connection.rtt, mypageMemoryData.jsHeapSizeLimit, mypageMemoryData.totalJSHeapSize, mypageMemoryData.usedJSHeapSize]); //mypageLoadInfo, myWebvitals
+    // mydata.y.push(shapecount);
 
-
-    mydata.x.push([resourceLoadingSum,xmlHttpRequestLoadingSum,totalDataDownloaded,EffectiveConnectionTypeDict[connection.effectiveType],connection.downlink, mypageMemoryData.totalJSHeapSize, mypageMemoryData.usedJSHeapSize]); //mypageLoadInfo, myWebvitals
-    mydata.y.push(shapecount);
-
-    // console.log("mydataframe");
-    //console.log(mydata);
+    console.log("mydataframe");
+    console.log(mydata);
 
     window.mydata = mydata;
-
-    return mydata;
 }
 
 
-// document.getElementById("random_data_puller").click();
+document.getElementById("random_data_puller").click();
 
-//-------------------------------------------------
-var corrBtn = L.easyButton({
-    id: "corrButton",
-    position: 'topleft',
-    leafletClasses: true,
-    states: [{
-        stateName: 'center',
-        onClick: function(btn, map){
-            // create popup contents
-            alert(window.mycorr);
-        },
-        title: 'Correlation Graph',
-        icon: '<img src="images/chart-line-solid.svg">',
-    }]
-}).addTo(map);
-function drawCorrelogram(){
-
-}
-
-
-//-------------------------------------------------
 // But with the Performance APIs, we can get real user measurement (RUM) in production.
 //The downlink attribute represents the effective bandwidth estimate in megabits per second, rounded to nearest multiple of 25 kilobits per second, and is based on recently observed application layer throughput across recently active connections, excluding connections made to private address space [RFC1918].
 //connection.rtt: The rtt attribute represents the effective round-trip time estimate in milliseconds, rounded to nearest multiple of 25 milliseconds, and is based on recently observed application-layer RTT measurements across recently active connections, excluding connections made to private address space [RFC1918].
