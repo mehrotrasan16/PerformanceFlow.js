@@ -3,7 +3,7 @@ var webVitals = require('web-vitals');
 var correlation = require('node-correlation');
 var Cookies = require('js-cookie');
 // var MiniMap = require('leaflet-minimap');
-// var main = require('./app.js')
+
 
 function getRandomLatLng(map) {
     var bounds = map.getBounds(),
@@ -209,10 +209,10 @@ function drawCorrelogram(cookiename) {
     //     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var rows = JSON.parse(Cookies.get(cookiename));
-    console.log(rows);
+    // console.log(rows);
 
     var data = [];
-    var cols = ["resourceLoad","dataLoad","totalData","connType","connMaxSpeed","jsHeapRatio"];
+    var cols = ["resourceLoad","dataLoad","totalData","jsHeapRatio"]; //"connType","connMaxSpeed"
     for(i=0; i< rows.length; i++){
         for(j=0; j < cols.length; j++){
             data.push({

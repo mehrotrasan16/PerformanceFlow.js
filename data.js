@@ -1,162 +1,159 @@
-import helper from "./helper";
+import {onEachFeature,preplotpoints,editableLayers, info, mypagefn} from "./app";
 
-let isValid = true;
 
-const data = {
-    resources: [],
-    marks: [],
-    measures:[],
-    perfTiming: [],
-    allResourcesCalc: [],
-    isValid: () => isValid
-}
 
-const supportedFeatures = () => {
-    if (window.performance && window.performance.getEntriesByType !== undefined){
-        data.resources = window.performance.getEntriesByType("resource");
-        data.marks = window.performance.getEntriesByType("mark");
-        data.measures = window.performance.getEntriesByType("measure");
-    }else if(window.performance && window.performance.webkitGetEntriesByType !== undefined){
-        data.resources = window.performance.webkitGetEntriesByType("resource");
-        data.marks = window.performance.webkitGetEntriesByType("mark");
-        data.measures = window.performance.webkitGetEntriesByType("measure");
-    }else{
-        alert("Your browser foes not support the Resource Timing API. \n Please Check http://caniusse.com/$feat=resource-timing to see the browsers which support it.")
-        return false;
-    }
+export async function getLoadData(num_states){
+    var stateshapes = [];
+    // let num_states = 30
+    const starttime = Date.now();
+//https://medium.com/@maptastik/loading-external-geojson-a-nother-way-to-do-it-with-jquery-c72ae3b41c01 dynamically load geojson
+    for(var i = 1 ; i <= num_states; i++){
+        let statenumber=(i < 10)? '0'+i.toString():i.toString()
+        let filename='cb_2018_'+statenumber+'_tract_500k.json';
+        stateshapes[i] = $.ajax({
+            url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/USA-cb_tract_500k-geojson/"+filename,
+            dataType: "json",
+            success: function (data){
+                console.log(filename + " Retrieved");
+                // console.log(performanceAnalyzerData);
+                editableLayers.addLayer(L.geoJSON(data,{
+                        onEachFeature: onEachFeature
+                    })
+                );
 
-    if(window.performance.timing){
-        data.perfTiming = window.performance.timing;
-    }else{
-        alert("Your browser foes not support the deprecated Performance Timing API. \n Please Check http://caniusse.com/$feat=resource-timing to see the browsers which support it.")
-        return false;
-    }
+                var updateProps = {
+                    name: preplotpoints.length,
+                    timestamp: Date.now() - starttime,
+                };
 
-    if(data.perfTiming.loadEventEnd - data.perfTiming.navigationStart < 0){
-        alert("Page is still loading - please try again when page is loaded");
-        return false;
-    }
-    return true;
-};
-
-(() => {
-    isValid = supportedFeatures();
-
-    data.allResourcesCalc = data.resources
-        .filter((currR) => !currR.name.match(/http[s]?\:\/\/(micmro|nurun).github.io\/performance-bookmarklet\/.*/))
-        .map((currR, i, arr) =>{
-
-            const isRequest = currR.name.indexOf("http") === 0;
-            let urlFragments, maybeFileName, fileExtension;
-
-            if(isRequest){
-                urlFragments = currR.name.match(/:\/\/(.[^/]+)([^?]*)\??(.*)/);
-                maybeFileName = urlFragments[2].split("/").pop();
-                fileExtension = maybeFileName.substr((Math.max(0, maybeFileName.lastIndexOf(".")) || Infinity) + 1);
-            }else{
-                urlFragments = ["",location.host];
-                fileExtension = currR.name.split(":")[0];
-            }
-
-            const currRes = {
-                name: currR.name,
-                domain: urlFragments[1],
-                initiatorType: currR.initiatorType || fileExtension || "SourceMap or Not Defined",
-                fileExtension: fileExtension || "XHR or Not Defined",
-                loadtime: currR.duration,
-                fileType: helper.getFileType(fileExtension, currR.initiatorType),
-                isRequestToHost: urlFragments[1] === location.host
-            };
-
-            for (let attr in currR){
-                if(typeof currR[attr] !== "function"){
-                    curRes[attr] = currR[attr];
+                info.update(updateProps);
+            },
+            error: function (xhr){
+                console.log(xhr.statusText);
+                //alert(xhr.statusText);
+            },
+            complete: function(data) {
+                if(i === num_states-1){
+                    console.log(" plotting "+ preplotpoints.length.toString() +"stored tracts takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
+                    console.log(" plotting "+ preplotpoints.length.toString() +"stored tracts takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
                 }
             }
-
-            if(currR.requestStart){
-                currRes.requestStartDelay = currR.requestStart - currR.startTime;
-                currRes.dns = currR.domainLookupEnd - currR.domainLookupStart;
-                currRes.tcp = currR.connectEnd - currR.connectStart;
-                currRes.ttfb = currR.responseStart - currR.startTime;
-                currRes.requestDuration = currR.responseStart - currR.requestStart;
-            }
-            if(currR.secureConnectionStart){
-                currRes.ssl = currR.connectEnd - currR.secureConnectionStart;
-            }
-
-            return currRes;
-        });
-
-    data.requestsOnly = data.allResourcesCalc.filter((currR) => {
-        return currR.name.indexOf("http") === 0 && !currR.name.match(/js.map$/);
-    })
-
-    data.initiatorTypeCounts = helper.getItemCount(data.requestsOnly.map((currR,i,arr) => {
-      return currR.initiatorType || currR.fileExtension;
-    }), "initiatorType");
-
-    data.initiatorTypeCountHostExt = helper.getItemCount(data.requestsOnly.map((currR, i, arr) => {
-        return (currR.initiatorType || currR.fileExtension) + " " + (currR.isRequestToHost ? "(host)" : "(external)");
-    }), "initiatorType");
-
-    data.requestsByDomain = helper.getItemCount( data.requestsOnly.map((currR, i, arr) => currR.domain),"domain");
-
-    data.fileTypeCountHostExt = helper.getItemCount(data.requestsOnly.map((currR, i, arr) => {
-        return currR.fileType  + " " + (currR.isRequestToHost ? "(host)" : "(external)");
-    }), "fileType");
-
-    data.fileTypeCounts = helper.getItemCount(data.requestsOnly.map((currR, i, arr) => currR.fileType), "fileType");
-
-    const tempResponseEnd = {};
-    data.requestsOnly.forEach((currR) =>{
-        const entry = data.requestsByDomain.filter((a) => a.domain == currR.domain)[0] || {};
-
-        const lastResponseEnd = tempResponseEnd[currR.domain] || 0;
-
-        currR.duration = entry.duration || (currR.responseEnd - currR.startTime);
-
-        if(lastResponseEnd <= currR.startTime){
-            entry.durationTotalParallel = (entry.durationTotalParallel||0) + currR.duration;
-        } else if (lastResponseEnd < currR.responseEnd){
-            entry.durationTotalParallel = (entry.durationTotalParallel||0) + (currR.responseEnd - lastResponseEnd);
-        }
-        tempResponseEnd[currR.domain] = currR.responseEnd||0;
-        entry.durationTotal = (entry.durationTotal||0) + currR.duration;
-    });
-
-    //Request counts
-    data.hostRequests = data.requestsOnly
-        .filter((domain) => domain.domain === location.host).length;
-
-    data.currAndSubdomainRequests = data.requestsOnly
-        .filter((domain) => domain.domain.split(".").slice(-2).join(".") === location.host.split(".").slice(-2).join("."))
-        .length;
-
-    data.crossDocDomainRequests = data.requestsOnly
-        .filter((domain) => !helper.endsWith(domain.domain, document.domain)).length;
-
-    data.hostSubdomains = data.requestsByDomain
-        .filter((domain) => helper.endsWith(domain.domain, location.host.split(".").slice(-2).join(".")) && domain.domain !== location.host)
-        .length;
-
-
-    data.slowestCalls = [];
-    data.average = undefined;
-
-    if(data.allResourcesCalc.length > 0){
-        data.slowestCalls = data.allResourcesCalc
-            .filter((a) => a.name !== location.href)
-            .sort((a, b) => b.duration - a.duration);
-
-        data.average = Math.floor(data.slowestCalls.reduceRight((a,b) => {
-            if(typeof a !== "number"){
-                return a.duration + b.duration
-            }
-            return a + b.duration;
-        }) / data.slowestCalls.length);
+        })
     }
+}
 
-})();
+export function getGeneratePoints(num_points) {
+    const starttime = Date.now();
+    let geojson_fc = random.point(num_points,[-60.95, 25.84 , -130.67, 49.38]); //WSEN
+    console.log(geojson_fc);
+    editableLayers.addLayer(L.geoJson(geojson_fc,{
+        onEachFeature: onEachFeature,
+        pointToLayer: function (geoJsonPoint,latlng){
+            return L.circle(latlng);
+        }
+    }));
 
-export default data;
+    var updateProps = {
+        name: preplotpoints.length,
+        timestamp: Date.now() - starttime,
+    };
+
+    info.update(updateProps);
+
+    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
+    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
+
+}
+
+export async function getLoadPoints(num_point_files){
+    var points = [];
+    const starttime = Date.now();
+    performance.mark("all points: loading");
+    for(var i = 1 ; i <= num_point_files; i++){
+        let filename='points_run_'+ i.toString()+'.json';
+        points[i] = $.ajax({
+            url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/point-data/"+filename,
+            dataType: "json",
+            success: function (data){
+                console.log(filename + " Retrieved");
+                performance.mark("one point file: adding to map");
+                editableLayers.addLayer(L.geoJSON(data,{
+                        onEachFeature: onEachFeature,
+                        pointToLayer: function (geoJsonPoint,latlng){
+                            return L.circle(latlng);
+                        }
+                    }
+                    )
+                );
+                performance.mark("one point file: loaded and added to map");
+
+                var updateProps = {
+                    name: preplotpoints.length,
+                    timestamp: Date.now() - starttime,
+                };
+
+                info.update(updateProps);
+            },
+            error: function (xhr){
+                console.log(xhr.statusText);
+                //alert(xhr.statusText);
+            },
+            complete: function(data) {
+                performance.mark("all points: loaded")
+                if(i === num_point_files-1){
+                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
+                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
+                }
+            }
+        })
+    }
+    return i;
+}
+// getLoadPoints(4)
+
+export async function getLoadShapes(num_shape_files){
+    var shapes = [];
+    const starttime = Date.now();
+    performance.mark("all shapes: loading");
+    for(var i = 1 ; i <= num_shape_files; i++){
+        let filename='pentagons_run_' + i.toString() + '.json' //petagons_run_'+ i.toString()+'.json';
+        shapes[i] = $.ajax({
+            url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/shape-data/"+filename,
+            dataType: "json",
+            success: function (data){
+                console.log(filename + " Retrieved");
+                performance.mark('Adding Shape Layer to map')
+                editableLayers.addLayer(L.geoJSON(data,{
+                        onEachFeature: onEachFeature,
+                    }
+                    )
+                );
+                performance.mark('Done Adding Shape Layer to map')
+                var updateProps = {
+                    name: preplotpoints.length,
+                    timestamp: Date.now() - starttime,
+                };
+
+                info.update(updateProps);
+            },
+            error: function (xhr){
+                console.log(xhr.statusText);
+                //alert(xhr.statusText);
+            },
+            complete: function(data) {
+                if(i === num_shape_files-1){
+                    console.log(" plotting "+ preplotpoints.length.toString() +"stored shapes takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
+                    console.log(" plotting "+ preplotpoints.length.toString() +"stored shapes takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
+                }
+            }
+        })
+    }
+}
+
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+// module.exports = {
+//     map,getLoadPoints, getLoadData,getLoadShapes
+// }
+

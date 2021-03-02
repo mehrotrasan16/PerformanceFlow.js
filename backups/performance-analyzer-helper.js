@@ -2,10 +2,10 @@
 Misc helpers
 */
 
-const helper = {};
+const performanceAnalyzerHelper = {};
 
 //extract a resources file type
-helper.getFileType = (fileExtension, initiatorType) => {
+performanceAnalyzerHelper.getFileType = (fileExtension, initiatorType) => {
     if(fileExtension){
         switch(fileExtension){
             case "jpg" :
@@ -52,7 +52,7 @@ helper.getFileType = (fileExtension, initiatorType) => {
     return initiatorType;
 };
 
-helper.getRandomColor = (baseRangeRed, baseRangeGreen, baseRangeBlue) => {
+performanceAnalyzerHelper.getRandomColor = (baseRangeRed, baseRangeGreen, baseRangeBlue) => {
     const range = [
         baseRangeRed||"0123456789ABCDEF",
         baseRangeGreen||"0123456789ABCDEF",
@@ -68,7 +68,7 @@ helper.getRandomColor = (baseRangeRed, baseRangeGreen, baseRangeBlue) => {
     return color;
 };
 
-helper.endsWith = (str, suffix) => {
+performanceAnalyzerHelper.endsWith = (str, suffix) => {
     return str.indexOf(suffix, str.length - suffix.length) !== -1;
 };
 
@@ -79,7 +79,7 @@ const getColourVariation = (hexColour, variation) => {
     return "#" + r + g + b;
 }
 
-helper.getInitiatorOrFileTypeColour = (initiatorOrFileType, fallbackColour, variation) => {
+performanceAnalyzerHelper.getInitiatorOrFileTypeColour = (initiatorOrFileType, fallbackColour, variation) => {
     let colour = fallbackColour||"#bebebe"; //default
 
     //colour the resources by initiator or file type
@@ -105,7 +105,7 @@ helper.getInitiatorOrFileTypeColour = (initiatorOrFileType, fallbackColour, vari
 
 //counts occurrences of items in array arr and returns them as array of key valure pairs
 //keyName overwrites the name of the key attribute
-helper.getItemCount = (arr, keyName) => {
+performanceAnalyzerHelper.getItemCount = (arr, keyName) => {
     let counts = {},
         resultArr = [],
         obj;
@@ -114,7 +114,7 @@ helper.getItemCount = (arr, keyName) => {
         counts[key] = counts[key] ? counts[key]+1 : 1;
     });
 
-    //pivot data
+    //pivot performanceAnalyzerData
     for(let fe in counts){
         obj = {};
         obj[keyName||"key"] = fe;
@@ -127,7 +127,7 @@ helper.getItemCount = (arr, keyName) => {
     });
 };
 
-helper.clone = (obj) => {
+performanceAnalyzerHelper.clone = (obj) => {
     let copy;
 
     // Handle the 3 simple types, and null or undefined
@@ -144,7 +144,7 @@ helper.clone = (obj) => {
     if (obj instanceof Array) {
         copy = [];
         for (let i = 0, len = obj.length; i < len; i++) {
-            copy[i] = helper.clone(obj[i]);
+            copy[i] = performanceAnalyzerHelper.clone(obj[i]);
         }
         return copy;
     }
@@ -153,12 +153,12 @@ helper.clone = (obj) => {
     if (obj instanceof Object) {
         copy = {};
         for (let attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = helper.clone(obj[attr]);
+            if (obj.hasOwnProperty(attr)) copy[attr] = performanceAnalyzerHelper.clone(obj[attr]);
         }
         return copy;
     }
 
-    throw new Error("Unable to helper.clone obj");
+    throw new Error("Unable to performanceAnalyzerHelper.clone obj");
 };
 
-export default helper;
+export default performanceAnalyzerHelper;
