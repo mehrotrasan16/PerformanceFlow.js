@@ -23,14 +23,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dbAccess.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/normalization.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/data.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ml-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/ml-utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +117,7 @@
       <workItem from="1613970092145" duration="39930000" />
       <workItem from="1614355764152" duration="2009000" />
       <workItem from="1614663878652" duration="24886000" />
-      <workItem from="1615307409775" duration="624000" />
+      <workItem from="1615307409775" duration="7980000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -172,7 +168,14 @@
       <option name="project" value="LOCAL" />
       <updated>1614704569756</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Backup before js restructuring (just a little)">
+      <created>1615308242618</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1615308242618</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -198,6 +201,7 @@
     <MESSAGE value="Added Correlogram matrix diagram client side to show correlations of features.&#10;moved it into utils.js to try to keep the app.js clean." />
     <MESSAGE value="Added backups folder for better organization." />
     <MESSAGE value="Added ml-utils.js - moved single variable regression model into that file.&#10;Added data.js - moved getpoints, getshapes and gettracts/getdata into that function.&#10;Added a bunch of exports to allow the get functions to work from daata.js" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added ml-utils.js - moved single variable regression model into that file.&#10;Added data.js - moved getpoints, getshapes and gettracts/getdata into that function.&#10;Added a bunch of exports to allow the get functions to work from daata.js" />
+    <MESSAGE value="Backup before js restructuring (just a little)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Backup before js restructuring (just a little)" />
   </component>
 </project>

@@ -1,7 +1,5 @@
 import {onEachFeature,preplotpoints,editableLayers, info, mypagefn} from "./app";
 
-
-
 export async function getLoadData(num_states){
     var stateshapes = [];
     // let num_states = 30
@@ -156,4 +154,3 @@ export function sleep(ms) {
 // module.exports = {
 //     map,getLoadPoints, getLoadData,getLoadShapes
 // }
-

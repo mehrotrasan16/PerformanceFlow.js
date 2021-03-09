@@ -534,6 +534,9 @@ function callIdb(json_arr) {
         rTrans.oncomplete = function () {
             console.log("CONGRATULATIONS.");
         }
+        rTrans.onerror = function () {
+            console.log("error in insertion to Idb.");
+        }
     };
 
     request.onupgradeneeded.onerror = function(event) {
