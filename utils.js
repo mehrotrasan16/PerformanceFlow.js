@@ -222,7 +222,7 @@ function drawCorrelogram(cookiename) {
             });
         }
     }
-    // console.log(data);
+    // console.log(performanceAnalyzerData);
     var margin = {
             top: 25,
             right: 80,
@@ -345,6 +345,8 @@ function drawCorrelogram(cookiename) {
             .attr('x', 0)
             .attr('y', aS(d))
     });
+
+    Cookies.remove(cookiename);
 };
 
 exports.drawCorrelogram = drawCorrelogram;

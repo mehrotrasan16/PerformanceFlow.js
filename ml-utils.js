@@ -2,27 +2,96 @@ const Cookies = require('js-cookie');
 var tfvis = require('@tensorflow/tfjs-vis');
 var tf = require('@tensorflow/tfjs');
 
+export async function readIdb(){
+
+    var request = window.indexedDB.open("PerfDB", 1);
+
+    request.onerror = function(event) {
+        console.log("Hi, DB Open Failure.  Please Try again", event);
+    };
+
+    request.onsuccess = function(event) {
+        console.log('(WOR.NS) Within request.onsuccess');
+        var db = event.target.result;
+        console.log("(WOR.NS) db= ", db);
+
+        var rTrans = db.transaction("dom_measurements").objectStore("dom_measurements");
+
+        let request = rTrans.getAll();
+
+        request.onsuccess = function() {
+            if (request.result !== undefined) {
+                console.log("All Measurements:", request.result); // array of books with price=10
+                return request.result;
+            } else {
+                console.log("No measurements taken yet.");
+            }
+        };
+    };
+
+    // request.onupgradeneeded = function(event) {
+    //     console.log('(WINR.UGN)Within request.upgradeneeded');
+    //
+    //     var db = event.target.result;
+    //     console.log("(WINR.UGN) db:", db);
+    //
+    //     var oS = db.createObjectStore("dom_measurements", { keyPath: "timestamp" });
+    //     // oS.createIndex("name", "name", { unique: false });
+    //     // oS.createIndex("email", "email", { unique: true });
+    //     // oS.createIndex("age", "age", { unique: false });
+    // };
+    // request.onupgradeneeded.onerror = function(event) {
+    //     console.log("err", event);
+    // }
+}
+
+
 export async function getData() {
+    const mydata = JSON.parse(Cookies.get('mydata'));
+    console.log("mydata Data");
+    console.log(mydata)
     const perfData = JSON.parse(Cookies.get('jsonData'));
-    // console.log(perfData)
-    const cleaned = perfData.map(entry => ({
-        nodes: entry.nodes,
-        resourceLoadingTime: entry.resourceLoadingTime,
-        xmlHttpRequestLoadingTime: entry.xmlHttpRequestLoadingTime,
-    })).filter(entry => (entry.nodes != null && entry.resourceLoadingTime != null && entry.xmlHttpRequestLoadingTime != null));
-    // console.log(cleaned);
-    return cleaned;
+    console.log("json Cookie Data");
+    console.log(perfData)
+
+    var dbData = readIdb();
+    dbData.then(function(res){
+        const cleaned = res.map(entry => ({
+            nodes: entry.nodes,
+            resourceLoadingTime: entry.resourceLoadingTime,
+            xmlHttpRequestLoadingTime: entry.xmlHttpRequestLoadingTime,
+        })).filter(entry => (entry.nodes != null && entry.resourceLoadingTime != null && entry.xmlHttpRequestLoadingTime != null));
+        return cleaned;
+    });
+
+    // const cleaned = perfData.map(entry => ({
+    //     nodes: entry.nodes,
+    //     resourceLoadingTime: entry.resourceLoadingTime,
+    //     xmlHttpRequestLoadingTime: entry.xmlHttpRequestLoadingTime,
+    // })).filter(entry => (entry.nodes != null && entry.resourceLoadingTime != null && entry.xmlHttpRequestLoadingTime != null));
+    // return cleaned;
 }
 
 export async function run(){
-    const data = await getData();
-    const values = data.map(d => ({
-        x: d.resourceLoadingTime,
-        y: d.nodes
-    }));
+    var data = getData();
 
-    console.log(data);
-    console.log(values);
+    data.then(function(data) {
+        const values = data.map(d => ({
+            x: d.resourceLoadingTime,
+            y: d.nodes
+        }));
+    });
+
+    // localmydata.then(function(res) {
+    //     window.mycorr = utils.calculateCorrelation(res.x);
+    //     var json_str = JSON.stringify(window.mycorr);
+    //     Cookies.set('mycorr', json_str);
+    //     // console.log(window.mycorr);
+    // });
+
+
+    // console.log(data);
+    // console.log(values);
 
     tfvis.render.scatterplot(
         {name: 'resourceLoadingTime vs Nodes'},
@@ -35,23 +104,26 @@ export async function run(){
     );
 
     // Create the model
-    const model = createModel();
+    const model = createModel(); //createLinearRegressionModel();
     tfvis.show.modelSummary({name: 'Model Summary'}, model);
 
     // Convert the performanceAnalyzerData to a form we can use for training.
     const tensorData = convertToTensor(data);
     const {inputs, labels} = tensorData;
 
-    console.log("inputs");
-    console.log(inputs.data());
-    console.log("labels");
-    console.log(labels.data());
+    // console.log("inputs");
+    // console.log(inputs.data());
+    // console.log("labels");
+    // console.log(labels.data());
 
     // Train the model
     await trainModel(model, inputs, labels);
     console.log('Done Training');
 
     testModel(model, data, tensorData);
+    var d = new Date();
+    var model_name = "lin-reg-model_" + d.getHours().toString() + d.getMinutes().toString() + d.getSeconds().toString();
+    const saveResult = await model.save('downloads://'+model_name);
 }
 
 export function createModel() {
@@ -59,8 +131,21 @@ export function createModel() {
     const model = tf.sequential();
 
     // Add a single input layer
+    model.add(tf.layers.dense({inputShape: [1], units: 50, activation: 'sigmoid', useBias: true,kernelInitializer:'leCunNormal'}));
+    model.add(tf.layers.dense({inputShape: [50], units: 50, activation: 'sigmoid', useBias: true,kernelInitializer:'leCunNormal'}));
+
+    // Add an output layer
+    model.add(tf.layers.dense({units: 1, useBias: true}));
+
+    return model;
+}
+
+export function createLinearRegressionModel() {
+    // Create a sequential model
+    const model = tf.sequential();
+
+    // Add a single input layer
     model.add(tf.layers.dense({inputShape: [1], units: 10, activation: 'relu', useBias: true}));
-    model.add(tf.layers.dense({inputShape: [10], units: 30, activation: 'relu', useBias: true}));
 
     // Add an output layer
     model.add(tf.layers.dense({units: 1, useBias: true}));
@@ -113,11 +198,11 @@ export async function trainModel(model, inputs, labels) {
         metrics: ['mse'],
     });
 
-    const batchSize = 2;
-    const epochs = 30;
+    // const batchSize = 2;
+    const epochs = 50;
 
     return await model.fit(inputs, labels, {
-        batchSize,
+        // batchSize,
         epochs,
         shuffle: true,
         callbacks: tfvis.show.fitCallbacks(
@@ -131,8 +216,8 @@ export async function trainModel(model, inputs, labels) {
 export function testModel(model, inputData, normalizationData) {
     const {inputMax, inputMin, labelMin, labelMax} = normalizationData;
     const [xs, preds] = tf.tidy(() => {
-        const xs = tf.linspace(0,2, 20);
-        const preds = model.predict(xs.reshape([20, 1]));
+        const xs = tf.linspace(0,2, 25);
+        const preds = model.predict(xs.reshape([25, 1]));
 
         const unNormXs = xs
             .mul(inputMax.sub(inputMin))

@@ -7,6 +7,7 @@ var easybutton = require('leaflet-easybutton');
 const Cookies = require('js-cookie'); //assign module to variable called "Cookies"
 var mlutils = require("./ml-utils");
 var data = require("./data.js");
+var db = require("./dbAccess.js");
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
@@ -17,7 +18,11 @@ var center = [40.5853, -105.0844];
 console.time("Home");
 
 // Create the map
-var map = L.map('map');
+var map = L.map('map',
+    {
+        renderer: L.canvas(),
+        zoomSnap: 0
+    });
 map.setView(center, 5);
 
 var tiles = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -173,7 +178,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
             url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/shape-data/"+filename,
             dataType: "json",
             success: function (data){
-                console.log(filename + " Retrieved");
+                // console.log(filename + " Retrieved");
                 // console.log(shapes)
                 performance.mark('Start: Adding Shape Layer ' +i +' to map');
                 editableLayers.addLayer(L.geoJSON(data,{
@@ -191,7 +196,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                 info.update(updateProps);
             },
             error: function (xhr){
-                console.log(xhr.statusText);
+                // console.log(xhr.statusText);
                 //alert(xhr.statusText);
             },
             complete: function(data) {
@@ -205,7 +210,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                         url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/point-data/"+filename,
                         dataType: "json",
                         success: function (data){
-                            console.log(filename + " Retrieved");
+                            // console.log(filename + " Retrieved");
                             performance.mark("Start: Adding Point Layer " +i +" to map");
                             editableLayers.addLayer(L.geoJSON(data,{
                                     onEachFeature: onEachFeature,
@@ -226,7 +231,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                             info.update(updateProps);
                         },
                         error: function (xhr){
-                            console.log(xhr.statusText);
+                            // console.log(xhr.statusText);
                             //alert(xhr.statusText);
                         },
                         complete: function(data) {
@@ -243,7 +248,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                     url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/USA-cb_tract_500k-geojson/"+filename,
                                     dataType: "json",
                                     success: function (data){
-                                        console.log(filename + " Retrieved");
+                                        // console.log(filename + " Retrieved");
                                         // console.log(stateshapes[i]);
                                         // console.log(performanceAnalyzerData);
                                         performance.mark("Start: Adding Tract Layer " +i +" to map");
@@ -262,7 +267,7 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                         info.update(updateProps);
                                     },
                                     error: function (xhr){
-                                        console.log(xhr.statusText);
+                                        // console.log(xhr.statusText);
                                         //alert(xhr.statusText);
                                     },
                                     complete: function (data) {
@@ -314,12 +319,11 @@ var mybtn = L.easyButton({
             console.time("getLoadData")
             // clicked(this);
             // $.when(getLoadData(5)).then().then(mypagefn());
-            getCompoundData(2,2,3);
+            getCompoundData(5,1,5);
             console.timeEnd("getLoadData");
             console.profileEnd();
             // console.log("mydataframe");
             // console.log(mydata)
-
         },
         title: 'Performance',
         icon: '<img src="images/performance.svg">',
@@ -395,8 +399,9 @@ async function mypagefn() {
 
 
     mydata.x.push([resourceLoadingSum,xmlHttpRequestLoadingSum,totalDataDownloaded, mypageMemoryData.usedJSHeapSize/mypageMemoryData.totalJSHeapSize]); //mypageLoadInfo, myWebvitals
-    mydata.y.push(shapecount);
-    jsonData.push({
+    mydata.y.push(parseInt(shapecount));
+    var jsonrec = {
+        "timestamp": Date.now(),
         "nodes": parseInt(shapecount),
         "resourceLoadingTime":resourceLoadingSum,
         "xmlHttpRequestLoadingTime": xmlHttpRequestLoadingSum,
@@ -405,7 +410,8 @@ async function mypagefn() {
         "connectionMaxSpeed":connection.downlink,
         "JSmemoryUsed": mypageMemoryData.usedJSHeapSize,
         "JStotalMemory": mypageMemoryData.totalJSHeapSize
-    });
+    }
+    jsonData.push(jsonrec);
 
     // console.log("mydataframe");
     //console.log(mydata);
@@ -460,6 +466,80 @@ var trainBtn = L.easyButton({
     }]
 }).addTo(map);
 
+//-------------------------------------------------
+var storeBtn = L.easyButton({
+    id: "storeButton",
+    position: 'topleft',
+    leafletClasses: true,
+    states: [{
+        stateName: 'center',
+        onClick: function(btn, map){
+            var json_arr = window.jsonData;
+            console.log("Storing");
+            console.log(json_arr.length);
+            console.log(json_arr[0]);
+            callIdb(json_arr);
+        },
+        title: 'Store Measurements',
+        icon: '<i>DB ⬇</i>',
+    }]
+}).addTo(map);
+
+/***
+ * https://stackoverflow.com/questions/54718446/objectstore-add-not-adding-data-with-different-key-in-indexeddb
+ * @param json_arr
+ */
+function callIdb(json_arr) {
+
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction || {READ_WRITE: "readwrite"}; // This line should only be needed if it is needed to support the object's constants for older browsers
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+
+    if (!window.indexedDB) {
+        console.log("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
+    } else {
+        console.log("You're good to go with IndexedDB");
+    };
+
+    var request = window.indexedDB.open("PerfDB", 1);
+
+    request.onerror = function(event) {
+        console.log("Hi, DB Open Failure.  Please Try again", event);
+    };
+
+
+    request.onupgradeneeded = function(event) {
+        console.log('(WINR.UGN)Within request.upgradeneeded');
+
+        var db = event.target.result;
+        console.log("(WINR.UGN) db:", db);
+
+        var oS = db.createObjectStore("dom_measurements", { keyPath: "timestamp" });
+        // oS.createIndex("name", "name", { unique: false });
+        // oS.createIndex("email", "email", { unique: true });
+        // oS.createIndex("age", "age", { unique: false });
+    };
+
+    request.onsuccess = function(event) {
+        console.log('(WOR.NS) Within request.onsuccess');
+        var db = event.target.result;
+        console.log("(WOR.NS) db= ", db);
+
+        var rTrans = db.transaction("dom_measurements", "readwrite").objectStore("dom_measurements");
+
+        json_arr.forEach(function(json_rec) {
+            rTrans.add(json_rec);
+            // console.log("You followed directions! Well done. var restaurant: ", json_rec, "stored with this transaction: ", rTrans);
+        });
+        rTrans.oncomplete = function () {
+            console.log("CONGRATULATIONS.");
+        }
+    };
+
+    request.onupgradeneeded.onerror = function(event) {
+        console.log("err", event);
+    }
+}
 //-------------------------------------------------
 // But with the Performance APIs, we can get real user measurement (RUM) in production.
 //The downlink attribute represents the effective bandwidth estimate in megabits per second, rounded to nearest multiple of 25 kilobits per second, and is based on recently observed application layer throughput across recently active connections, excluding connections made to private address space [RFC1918].
