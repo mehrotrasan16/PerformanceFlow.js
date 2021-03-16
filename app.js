@@ -315,13 +315,13 @@ var mybtn = L.easyButton({
     states: [{
         stateName: 'center',
         onClick: function(btn, map){
-            console.profile("MeME")
+            // console.profile("MeME")
             console.time("getLoadData")
             // clicked(this);
             // $.when(getLoadData(5)).then().then(mypagefn());
-            getCompoundData(5,1,5);
+            getCompoundData(10,1,5);
             console.timeEnd("getLoadData");
-            console.profileEnd();
+            // console.profileEnd();
             // console.log("mydataframe");
             // console.log(mydata)
         },
@@ -356,7 +356,7 @@ var jsonData = []
 async function mypagefn() {
     var x = await document.getElementsByClassName("legend");
     var shapecount = await x[0].innerHTML.split(",")[0].split('>')[3];
-    console.log(shapecount);
+    //console.log(shapecount);
 
     //Total Loading time of all resources, including XMLHTTPRequests
     var resourceLoadingSum = 0;
@@ -475,9 +475,9 @@ var storeBtn = L.easyButton({
         stateName: 'center',
         onClick: function(btn, map){
             var json_arr = window.jsonData;
-            console.log("Storing");
-            console.log(json_arr.length);
-            console.log(json_arr[0]);
+            // console.log("Storing");
+            // console.log(json_arr.length);
+            // console.log(json_arr[0]);
             callIdb(json_arr);
         },
         title: 'Store Measurements',

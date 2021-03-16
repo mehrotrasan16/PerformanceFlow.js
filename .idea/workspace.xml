@@ -117,7 +117,9 @@
       <workItem from="1613970092145" duration="39930000" />
       <workItem from="1614355764152" duration="2009000" />
       <workItem from="1614663878652" duration="24886000" />
-      <workItem from="1615307409775" duration="7980000" />
+      <workItem from="1615307409775" duration="19274000" />
+      <workItem from="1615673964659" duration="3035000" />
+      <workItem from="1615911248527" duration="2603000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -175,7 +177,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615308242618</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="JS - removed some commented code.&#10;Rachit bhai saved me by using promises to get all the data from my IDB function. &#10;added console log in case db insertion fails.">
+      <created>1615320460523</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1615320460523</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -202,6 +211,7 @@
     <MESSAGE value="Added backups folder for better organization." />
     <MESSAGE value="Added ml-utils.js - moved single variable regression model into that file.&#10;Added data.js - moved getpoints, getshapes and gettracts/getdata into that function.&#10;Added a bunch of exports to allow the get functions to work from daata.js" />
     <MESSAGE value="Backup before js restructuring (just a little)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Backup before js restructuring (just a little)" />
+    <MESSAGE value="JS - removed some commented code.&#10;Rachit bhai saved me by using promises to get all the data from my IDB function. &#10;added console log in case db insertion fails." />
+    <option name="LAST_COMMIT_MESSAGE" value="JS - removed some commented code.&#10;Rachit bhai saved me by using promises to get all the data from my IDB function. &#10;added console log in case db insertion fails." />
   </component>
 </project>
