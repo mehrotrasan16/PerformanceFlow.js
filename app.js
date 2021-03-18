@@ -8,6 +8,7 @@ const Cookies = require('js-cookie'); //assign module to variable called "Cookie
 var mlutils = require("./ml-utils");
 var data = require("./data.js");
 var db = require("./dbAccess.js");
+var tfvis = require('@tensorflow/tfjs-vis')
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
@@ -65,27 +66,28 @@ var options = {
     position: "topleft",
     draw: {
         polygon: {
-            allowIntersection: false, // Restricts shapes to simple polygons
-            drawError: {
-                color: "#e1e100", // Color the shape will turn when intersects
-                message: "<strong>Oh snap!<strong> you can't draw that!", // Message that will show when intersect
-            },
+            // allowIntersection: false, // Restricts shapes to simple polygons
+            // drawError: {
+            //     color: "#e1e100", // Color the shape will turn when intersects
+            //     message: "<strong>Oh snap!<strong> you can't draw that!", // Message that will show when intersect
+            // },
             shapeOptions: {
-                color: "#97009c",
+                color: "#f8c39b",
+                weight: 0.01
             },
         },
         polyline: {
             shapeOptions: {
                 color: "#f357a1",
-                weight: 10,
+                weight: 1,
             },
         },
         // disable toolbar item by setting it to false
-        polyline: true,
-        circle: true, // Turns off this drawing tool
-        polygon: true,
-        marker: true,
-        rectangle: true,
+        // polyline: true,
+        // circle: true, // Turns off this drawing tool
+        // polygon: true,
+        // marker: true,
+        // rectangle: true,
     },
     edit: {
         featureGroup: editableLayers, //REQUIRED!!
@@ -114,6 +116,15 @@ map.on("draw:created", function (e) {
 
     editableLayers.addLayer(layer);
 });
+
+// drawControl.setDrawingOptions({
+//     polygon: {
+//         shapeOptions: {
+//             color: '#eccdb6',
+//             weight:0.001
+//         }
+//     }
+// });
 //////////////////////////END DRAW CONTROL ON THE MAP
 
 //////////////////////////start fullscreen CONTROL ON THE MAP
@@ -153,6 +164,8 @@ function onEachFeature(feature, layer) {
     // console.log(feature.properties.NAME);
     if (feature.properties && feature.properties.NAME) {
         layer.bindPopup(feature.properties.NAME);
+    }else{
+        layer.bindPopup("Sample Properties:" + "\n" + "1)This is a polygon");
     }
     preplotpoints.push(feature.properties.NAME);
 }
@@ -183,9 +196,13 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                 performance.mark('Start: Adding Shape Layer ' +i +' to map');
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature,
-                    }
-                    )
-                );
+                        style: {
+                            color: '#eccdb6',
+                            weight:1,
+                            stroke: true,
+                            fill:false
+                        }
+                    }));
                 performance.mark('Done: Adding Shape Layer ' +i +' to map');
                 performance.measure('Shape Layer ' + i + ' Scripting:', 'Start: Adding Shape Layer ' +i +' to map', 'Done: Adding Shape Layer ' +i+' to map');
                 var updateProps = {
@@ -253,7 +270,13 @@ async function getCompoundData(numPoints, numShapes, numTracts){
                                         // console.log(performanceAnalyzerData);
                                         performance.mark("Start: Adding Tract Layer " +i +" to map");
                                         editableLayers.addLayer(L.geoJSON(data,{
-                                                onEachFeature: onEachFeature
+                                                onEachFeature: onEachFeature,
+                                                style: {
+                                                    // color: '#eccdb6',
+                                                    weight:1,
+                                                    stroke: true,
+                                                    fill:false
+                                                }
                                             })
                                         );
                                         performance.mark("Done: Adding Tract Layer " +i +" to map");
@@ -319,7 +342,7 @@ var mybtn = L.easyButton({
             console.time("getLoadData")
             // clicked(this);
             // $.when(getLoadData(5)).then().then(mypagefn());
-            getCompoundData(10,1,5);
+            getCompoundData(5,1,0);
             console.timeEnd("getLoadData");
             // console.profileEnd();
             // console.log("mydataframe");
@@ -466,6 +489,21 @@ var trainBtn = L.easyButton({
     }]
 }).addTo(map);
 
+
+var viewBtn = L.easyButton({
+    id: "viewButton",
+    position: 'topleft',
+    leafletClasses: true,
+    states: [{
+        stateName: 'center',
+        onClick: function(btn, map){
+            tfvis.visor().toggle();
+        },
+        title: 'View Window',
+        icon: '<i>ModelView</i>',
+    }]
+}).addTo(map);
+
 //-------------------------------------------------
 var storeBtn = L.easyButton({
     id: "storeButton",
@@ -543,6 +581,8 @@ function callIdb(json_arr) {
         console.log("err", event);
     }
 }
+
+
 //-------------------------------------------------
 // But with the Performance APIs, we can get real user measurement (RUM) in production.
 //The downlink attribute represents the effective bandwidth estimate in megabits per second, rounded to nearest multiple of 25 kilobits per second, and is based on recently observed application layer throughput across recently active connections, excluding connections made to private address space [RFC1918].
