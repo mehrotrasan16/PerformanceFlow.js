@@ -4,7 +4,7 @@
   "description": "A cleaner implementation of the leaflet-query-interface written by me at github.com/mehrotrasan16/BD_GIS_Leaflet_Page",
   "main": "app.js",
   "scripts": {
-    "bundle": "browserify app.js --standalone mymodule -o dist/bundle.js",
+    "bundle": "browserify app.js -p --standalone mymodule -o dist/bundle.js",
     "start": "npm run watch & live-server --ignore='**/node_modules/**'",
     "watch": "npm run bundle & webpack --watch --config webpack.config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,6 +25,10 @@
   "author": "Sanket M",
   "license": "ISC",
   "dependencies": {
+    "@tensorflow/tfjs": "^3.0.0",
+    "@tensorflow/tfjs-vis": "^1.5.0",
+    "idb": "^6.0.0",
+    "js-cookie": "^2.2.1",
     "geojson-random": "^0.5.0",
     "leaflet": "^1.7.1",
     "leaflet-ajax": "^2.1.0",
@@ -33,6 +37,7 @@
     "leaflet-fullscreen": "^1.0.2",
     "leaflet-minimap": "^3.6.1",
     "merge-json": "0.1.0-b.3",
+    "node-correlation": "^1.0.2",
     "tracealyzer": "^0.10.3",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"
@@ -42,7 +47,9 @@
     "@babel/preset-env": "^7.11.5",
     "babel-loader": "^8.1.0",
     "browserify": "^16.5.2",
+    "esmify": "^2.1.1",
     "live-server": "^1.2.1",
+    "web-vitals": "^1.1.0",
     "webpack-cli": "^3.3.12"
   }
 }

@@ -4,17 +4,26 @@ var Lfullscreen = require('leaflet-fullscreen')
 var utils = require('./utils.js');
 var random = require('geojson-random');
 var easybutton = require('leaflet-easybutton');
-
+const Cookies = require('js-cookie'); //assign module to variable called "Cookies"
+var mlutils = require("./ml-utils");
+var data = require("./data.js");
+var db = require("./dbAccess.js");
+var tfvis = require('@tensorflow/tfjs-vis')
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
 /* Base Setup of the Map*/
-performance.mark("sanket-startPageLoad");
 // center of the map
 var center = [40.5853, -105.0844];
 
+console.time("Home");
+
 // Create the map
-var map = L.map('map');
+var map = L.map('map',
+    {
+        renderer: L.canvas(),
+        zoomSnap: 0
+    });
 map.setView(center, 5);
 
 var tiles = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -51,32 +60,34 @@ L.control.scale().addTo(map);
 // Initialize the FeatureGroup to store editable layers
 var editableLayers = new L.FeatureGroup();
 map.addLayer(editableLayers);
+exports.editableLayers = editableLayers;
 
 var options = {
     position: "topleft",
     draw: {
         polygon: {
-            allowIntersection: false, // Restricts shapes to simple polygons
-            drawError: {
-                color: "#e1e100", // Color the shape will turn when intersects
-                message: "<strong>Oh snap!<strong> you can't draw that!", // Message that will show when intersect
-            },
+            // allowIntersection: false, // Restricts shapes to simple polygons
+            // drawError: {
+            //     color: "#e1e100", // Color the shape will turn when intersects
+            //     message: "<strong>Oh snap!<strong> you can't draw that!", // Message that will show when intersect
+            // },
             shapeOptions: {
-                color: "#97009c",
+                color: "#f8c39b",
+                weight: 0.01
             },
         },
         polyline: {
             shapeOptions: {
                 color: "#f357a1",
-                weight: 10,
+                weight: 1,
             },
         },
         // disable toolbar item by setting it to false
-        polyline: true,
-        circle: true, // Turns off this drawing tool
-        polygon: true,
-        marker: true,
-        rectangle: true,
+        // polyline: true,
+        // circle: true, // Turns off this drawing tool
+        // polygon: true,
+        // marker: true,
+        // rectangle: true,
     },
     edit: {
         featureGroup: editableLayers, //REQUIRED!!
@@ -105,6 +116,15 @@ map.on("draw:created", function (e) {
 
     editableLayers.addLayer(layer);
 });
+
+// drawControl.setDrawingOptions({
+//     polygon: {
+//         shapeOptions: {
+//             color: '#eccdb6',
+//             weight:0.001
+//         }
+//     }
+// });
 //////////////////////////END DRAW CONTROL ON THE MAP
 
 //////////////////////////start fullscreen CONTROL ON THE MAP
@@ -136,152 +156,56 @@ info.update = function (props) {
 };
 
 info.addTo(map);
+
+exports.info = info;
 ////////////END control that shows state info on hover
 
 function onEachFeature(feature, layer) {
     // console.log(feature.properties.NAME);
     if (feature.properties && feature.properties.NAME) {
         layer.bindPopup(feature.properties.NAME);
+    }else{
+        layer.bindPopup("Sample Properties:" + "\n" + "1)This is a polygon");
     }
     preplotpoints.push(feature.properties.NAME);
 }
 
 var preplotpoints = [];
 
-function getLoadData(num_states){
-    var stateshapes = [];
-    // let num_states = 30
-    const starttime = Date.now();
-//https://medium.com/@maptastik/loading-external-geojson-a-nother-way-to-do-it-with-jquery-c72ae3b41c01 dynamically load geojson
-    for(i = 1 ; i <= num_states; i++){
-        let statenumber=(i < 10)? '0'+i.toString():i.toString()
-        let filename='cb_2018_'+statenumber+'_tract_500k.json';
-        stateshapes[i] = $.ajax({
-            url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/USA-cb_tract_500k-geojson/"+filename,
-            dataType: "json",
-            success: function (data){
-                console.log(filename + " Retrieved");
-                console.log(data);
-                editableLayers.addLayer(L.geoJSON(data,{
-                        onEachFeature: onEachFeature
-                    })
-                );
-
-                updateProps = {
-                    name: preplotpoints.length,
-                    timestamp: Date.now() - starttime,
-                };
-
-                info.update(updateProps);
-            },
-            error: function (xhr){
-                console.log(xhr.statusText);
-                //alert(xhr.statusText);
-            },
-            complete: function(data) {
-                if(i === num_states){
-                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
-                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
-                }
-            }
-        })
-        // $.when(stateshapes[i]).done(function() {
-        //     editableLayers.addLayer(L.geoJSON(stateshapes[i].responseJSON,{
-        //             onEachFeature: onEachFeature
-        //         })
-        //     );
-        // });
-    }
-}
-
-// getLoadData(30);
-
-function getGeneratePoints(num_points) {
-    const starttime = Date.now();
-    let geojson_fc = random.point(num_points,[-60.95, 25.84 , -130.67, 49.38]); //WSEN
-    console.log(geojson_fc);
-    editableLayers.addLayer(L.geoJson(geojson_fc,{
-        onEachFeature: onEachFeature,
-        pointToLayer: function (geoJsonPoint,latlng){
-            return L.circle(latlng);
-        }
-    }));
-
-    updateProps = {
-        name: preplotpoints.length,
-        timestamp: Date.now() - starttime,
-    };
-
-    info.update(updateProps);
-
-    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
-    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
-
-}
+exports.onEachFeature = onEachFeature;
+exports.preplotpoints = preplotpoints;
+window.getLoadPoints = data.getLoadPoints;
+window.getLoadShapes = data.getLoadShapes;
+window.getLoadData = data.getLoadData;
+window.sleep = data.sleep;
 
 
-function getLoadPoints(num_point_files){
-    var points = [];
-    const starttime = Date.now();
-    for(i = 1 ; i <= num_point_files; i++){
-        let filename='points_run_'+ i.toString()+'.json';
-        points[i] = $.ajax({
-            url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/point-data/"+filename,
-            dataType: "json",
-            success: function (data){
-                console.log(filename + " Retrieved");
-                editableLayers.addLayer(L.geoJSON(data,{
-                        onEachFeature: onEachFeature,
-                        pointToLayer: function (geoJsonPoint,latlng){
-                            return L.circle(latlng);
-                        }
-                    }
-                    )
-                );
-
-                updateProps = {
-                    name: preplotpoints.length,
-                    timestamp: Date.now() - starttime,
-                };
-
-                info.update(updateProps);
-            },
-            error: function (xhr){
-                console.log(xhr.statusText);
-                //alert(xhr.statusText);
-            },
-            complete: function(data) {
-                if(i === num_point_files){
-                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
-                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
-                }
-            }
-        })
-    }
-    return i;
-}
-// getLoadPoints(4)
-
-function getLoadShapes(num_shape_files){
+async function getCompoundData(numPoints, numShapes, numTracts){
     var shapes = [];
+
     const starttime = Date.now();
-    for(i = 1 ; i <= num_shape_files; i++){
+    performance.mark("all performanceAnalyzerData: loading");
+    for(i = 1 ; i <= numShapes; i++){
         let filename='pentagons_run_' + i.toString() + '.json' //petagons_run_'+ i.toString()+'.json';
         shapes[i] = $.ajax({
             url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/shape-data/"+filename,
             dataType: "json",
             success: function (data){
-                console.log(filename + " Retrieved");
+                // console.log(filename + " Retrieved");
+                // console.log(shapes)
+                performance.mark('Start: Adding Shape Layer ' +i +' to map');
                 editableLayers.addLayer(L.geoJSON(data,{
                         onEachFeature: onEachFeature,
-                        pointToLayer: function (geoJsonPoint,latlng){
-                            return L.circle(latlng);
+                        style: {
+                            color: '#eccdb6',
+                            weight:1,
+                            stroke: true,
+                            fill:false
                         }
-                    }
-                    )
-                );
-
-                updateProps = {
+                    }));
+                performance.mark('Done: Adding Shape Layer ' +i +' to map');
+                performance.measure('Shape Layer ' + i + ' Scripting:', 'Start: Adding Shape Layer ' +i +' to map', 'Done: Adding Shape Layer ' +i+' to map');
+                var updateProps = {
                     name: preplotpoints.length,
                     timestamp: Date.now() - starttime,
                 };
@@ -289,129 +213,382 @@ function getLoadShapes(num_shape_files){
                 info.update(updateProps);
             },
             error: function (xhr){
-                console.log(xhr.statusText);
+                // console.log(xhr.statusText);
                 //alert(xhr.statusText);
             },
             complete: function(data) {
-                if(i === num_shape_files){
-                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + ((Date.now() - starttime)/1000).toString() +" seconds ");
-                    console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes " + (performance.memory.usedJSHeapSize / 1000000).toString() + " Mbytes ");
+                mypagefn();
+                var points = [];
+                const starttime = Date.now();
+                // performance.mark("all points: loading");
+                for(i = 1 ; i <= numPoints; i++){
+                    let filename='points_run_'+ i.toString()+'.json';
+                    points[i] = $.ajax({
+                        url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/point-data/"+filename,
+                        dataType: "json",
+                        success: function (data){
+                            // console.log(filename + " Retrieved");
+                            performance.mark("Start: Adding Point Layer " +i +" to map");
+                            editableLayers.addLayer(L.geoJSON(data,{
+                                    onEachFeature: onEachFeature,
+                                    pointToLayer: function (geoJsonPoint,latlng){
+                                        return L.circle(latlng);
+                                    }
+                                }
+                                )
+                            );
+                            performance.mark('Done: Adding Point Layer ' +i +' to map'); //Loading and Adding done for one performanceAnalyzerData file.
+                            performance.measure('Point Layer ' + i + ' Scripting:', 'Start: Adding Point Layer ' +i+' to map', 'Done: Adding Point Layer ' +i +' to map');
+
+                            var updateProps = {
+                                name: preplotpoints.length,
+                                timestamp: Date.now() - starttime,
+                            };
+
+                            info.update(updateProps);
+                        },
+                        error: function (xhr){
+                            // console.log(xhr.statusText);
+                            //alert(xhr.statusText);
+                        },
+                        complete: function(data) {
+                            mypagefn();
+                            performance.mark("all points: loaded")
+                            var stateshapes = [];
+                            // let num_states = 30
+                            const starttime = Date.now();
+//https://medium.com/@maptastik/loading-external-geojson-a-nother-way-to-do-it-with-jquery-c72ae3b41c01 dynamically load geojson
+                            for(i = 1 ; i <= numTracts; i++){
+                                let statenumber=(i < 10)? '0'+i.toString():i.toString()
+                                let filename='cb_2018_'+statenumber+'_tract_500k.json';
+                                stateshapes[i] = $.ajax({
+                                    url: "https://raw.githubusercontent.com/mehrotrasan16/us-census-tracts-shapefiles-and-geojson/master/USA-cb_tract_500k-geojson/"+filename,
+                                    dataType: "json",
+                                    success: function (data){
+                                        // console.log(filename + " Retrieved");
+                                        // console.log(stateshapes[i]);
+                                        // console.log(performanceAnalyzerData);
+                                        performance.mark("Start: Adding Tract Layer " +i +" to map");
+                                        editableLayers.addLayer(L.geoJSON(data,{
+                                                onEachFeature: onEachFeature,
+                                                style: {
+                                                    // color: '#eccdb6',
+                                                    weight:1,
+                                                    stroke: true,
+                                                    fill:false
+                                                }
+                                            })
+                                        );
+                                        performance.mark("Done: Adding Tract Layer " +i +" to map");
+                                        performance.measure('Tract Layer ' + i + ' Scripting:', 'Start: Adding Tract Layer ' +i+' to map', 'Done: Adding Tract Layer ' +i +' to map');
+
+                                        var updateProps = {
+                                            name: preplotpoints.length,
+                                            timestamp: Date.now() - starttime,
+                                        };
+
+                                        info.update(updateProps);
+                                    },
+                                    error: function (xhr){
+                                        // console.log(xhr.statusText);
+                                        //alert(xhr.statusText);
+                                    },
+                                    complete: function (data) {
+                                        performance.mark("tracts Loaded")
+                                        localmydata = mypagefn(); //returns a promise.
+                                        // console.log(localmydata);
+                                        localmydata.then(function(res) {
+                                            window.mycorr = utils.calculateCorrelation(res.x);
+                                            var json_str = JSON.stringify(window.mycorr);
+                                            Cookies.set('mycorr', json_str);
+                                            // console.log(window.mycorr);
+                                        });
+                                        // setTimeout(() => {
+                                        //     console.log(utils.calculateCorrelation.bind(localmydata.x)());
+                                        // }, 3000);
+                                    }
+                                })
+                            }
+                            window.stateshapes = stateshapes;
+                        }
+                    })
                 }
+                window.pointshapes = points;
             }
         })
     }
+    window.pentshapes = shapes;
 }
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-// module.exports = {
-//     map,getLoadPoints, getLoadData,getLoadShapes
-// }
-window.getLoadPoints = getLoadPoints;
-window.getLoadShapes = getLoadShapes;
-window.getLoadData = getLoadData;
-window.sleep = sleep;
 
 //----------------------------------------
-// 26th Jan 2021
-async function asyncCall(num_point_files=1) {
-    let starttime = Date.now()
-    var major_filename,shapecount;
-    const browser = await puppeteer.launch(); //{headless: false}
-    for(i = 0; i < 3;i++) {
+//Network Connection Information API
+var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+var type = connection.effectiveType;
+function updateConnectionStatus() {
+    console.log("Connection type changed from " + type + " to " + connection.effectiveType);
+    type = connection.effectiveType;
+}
+connection.addEventListener('change', updateConnectionStatus);
+//----------------------------------------
 
-        const context = await browser.createIncognitoBrowserContext();
-        const page = await context.newPage();
-
-        await page.tracing.start({path: './profile_' + i.toString() + '.json'});
-
-        await page.goto('http://localhost:63342/win_BD_experiment/clean-leaflet/', {waitUntil: 'load', timeout: 0});
-        // await page.goto('http://localhost:63342/aperture/', {waitUntil: 'load', timeout: 0});
-
-        let x = await page.evaluate((num_point_files) =>{
-                getLoadPoints(num_point_files);
-                // getLoadData(num_point_files);
-                getLoadShapes(num_point_files);
-            },num_point_files
-        );
-        console.log("Lag: " + ((num_point_files/10)*1000).toString())
-        await page.waitFor(1000*(num_point_files/10));
-
-        // //Code to dig into the iframe and select a fire station checkbox
-        // let myFrame;
-        // try{
-        //     for (const frame of page.mainFrame().childFrames()){
-        //         // Here you can use few identifying methods like url(),name(),title()
-        //         if (frame.url().includes ('map2.html')){
-        //             console.log('we found the map2 iframe')
-        //             myFrame = frame
-        //             // we assign this frame to myFrame to use it later
-        //         }
-        //     }
-        //
-        // } catch (error){
-        //     console.log("iframe/element related error" + error.toString());
-        // }
-
-        await page._client.send('Performance.enable');
-        const performanceMetrics = await page._client.send('Performance.getMetrics');
-
-        // const performanceTiming = JSON.parse(
-        //     await page.evaluate(() => JSON.stringify(window.performance.timing))
-        // );
-        const performanceTiming = await page.evaluate(() => JSON.stringify(window.performance.timing));
-        let perfvar = {}
-        perfvar.performanceTiming = performanceTiming
-        let perfJSON = JSON.parse(JSON.stringify(perfvar));
-
-        await page.tracing.stop();
-
-        try{
-            shapecount = await page.evaluate(() => {
-                var x = document.getElementsByClassName("legend");
-                shapecount = x[0].innerHTML.split(",")[0].split('>')[3];
-                return shapecount;
-            });
-            console.log( "Shape count: ", shapecount);
-            major_filename = shapecount == ""?'loadsof':shapecount.toString() + '-state-metrics'; ///Remember to change filename so that older records are not overwritten
-        }catch (err){
-            console.log(err.message);
-            continue;
-        }
-
-        await context.close();
-
-        const metrics = tracealyzer('./profile_' + i.toString() + '.json');
-
-        const filename = major_filename + '_run_' + i.toString() +'_' + Date.now().toString() + '.json';
-        var stream1 = fs.createWriteStream(tracepath+filename, {flags:'a'});
-        var result = mergeJSON.merge(metrics,performanceMetrics)
-        var result = mergeJSON.merge(result,perfJSON)
-        stream1.write(JSON.stringify(result));
-        stream1.close();
-
-        console.log("Time Taken for " + i.toString() + "th run for "+ shapecount +": ", Date.now() - starttime)
-    }
-    await browser.close();
-    return 1;
-};
-
-L.easyButton({
+var mybtn = L.easyButton({
+    id: "random_data_puller",
     position: 'topleft',
     leafletClasses: true,
     states: [{
         stateName: 'center',
         onClick: function(btn, map){
-            performance.mark("sanket-getLoadDataStart");
-            getLoadData(5);
-            // getLoadShapes(1);
-            getLoadPoints(3);
-            performance.mark("sanket-getLoadDataEnd");
+            // console.profile("MeME")
+            console.time("getLoadData")
+            // clicked(this);
+            // $.when(getLoadData(5)).then().then(mypagefn());
+            getCompoundData(5,1,0);
+            console.timeEnd("getLoadData");
+            // console.profileEnd();
+            // console.log("mydataframe");
+            // console.log(mydata)
         },
         title: 'Performance',
-        icon: '<img src="images/performance.svg">'
+        icon: '<img src="images/performance.svg">',
     }]
 }).addTo(map);
 
-performance.mark("sanket-endPageLoad");
+// async function clicked(elem) {
+//     preplotpoints = [];
+//     getLoadData(5);
+//     // getLoadShapes(1);
+//     getLoadPoints(3);
+//     // $.when(getLoadData(5)).then(getLoadPoints(3));
+//     performance.measure('button clicked');
+//     console.log("Page Load timings Info");
+//     console.log(utils.network_perf_info());
+//     console.log(utils.get_web_vitals());
+//     console.log("Network Connection Information! : ");
+//     console.log(navigator.connection);
+// }
+
+//Data Structure to hold all my features plus their outputs
+var mydata = {
+    x: [],
+    y: []
+}
+
+var jsonData = []
+
+
+async function mypagefn() {
+    var x = await document.getElementsByClassName("legend");
+    var shapecount = await x[0].innerHTML.split(",")[0].split('>')[3];
+    //console.log(shapecount);
+
+    //Total Loading time of all resources, including XMLHTTPRequests
+    var resourceLoadingSum = 0;
+    var xmlHttpRequestLoadingSum = 0;
+    performance.getEntriesByType('resource').forEach(entry => {
+        resourceLoadingSum += entry.duration;
+        if(entry.initiatorType === "xmlhttprequest"){  //cool one liner to do this : p.filter(function(entry) { return entry.initiatorType === "xmlhttprequest" })
+            xmlHttpRequestLoadingSum += entry.duration;
+        }
+    });
+
+    // myWebvitals = await utils.get_web_vitals();
+    // mypageLoadInfo = await utils.network_perf_info();
+    mypageMemoryData = await utils.memory_performance_info();
+
+    var EffectiveConnectionTypeDict = {
+            "2g":2,
+            "3g":3,
+            "4g":4,
+            "slow-2g":1
+    };
+
+    var totalDataDownloaded = 0;
+    if(window.stateshapes){
+        window.stateshapes.forEach(function(ajaxobject) {
+            totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
+        });
+    }
+    if(window.pointshapes){
+        pointshapes.forEach(function(ajaxobject) {
+            totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
+        });
+    }
+
+    if(window.pentshapes){
+        window.pentshapes.forEach(function(ajaxobject) {
+            totalDataDownloaded += (ajaxobject.getResponseHeader('Content-Length')? parseInt(ajaxobject.getResponseHeader('Content-Length')): 0 );
+        });
+    }
+
+
+    mydata.x.push([resourceLoadingSum,xmlHttpRequestLoadingSum,totalDataDownloaded, mypageMemoryData.usedJSHeapSize/mypageMemoryData.totalJSHeapSize]); //mypageLoadInfo, myWebvitals
+    mydata.y.push(parseInt(shapecount));
+    var jsonrec = {
+        "timestamp": Date.now(),
+        "nodes": parseInt(shapecount),
+        "resourceLoadingTime":resourceLoadingSum,
+        "xmlHttpRequestLoadingTime": xmlHttpRequestLoadingSum,
+        "totalDataDownloaded":totalDataDownloaded,
+        "connectionType": EffectiveConnectionTypeDict[connection.effectiveType],
+        "connectionMaxSpeed":connection.downlink,
+        "JSmemoryUsed": mypageMemoryData.usedJSHeapSize,
+        "JStotalMemory": mypageMemoryData.totalJSHeapSize
+    }
+    jsonData.push(jsonrec);
+
+    // console.log("mydataframe");
+    //console.log(mydata);
+
+    window.mydata = mydata;
+    window.jsonData = jsonData;
+    var json_str = JSON.stringify(mydata);
+    Cookies.set('mydata',json_str);
+    var json_str = JSON.stringify(jsonData);
+    Cookies.set('jsonData',json_str);
+
+    return mydata;
+}
+
+exports.mypagefn = mypagefn;
+
+//-------------------------------------------------
+var corrBtn = L.easyButton({
+    id: "corrButton",
+    position: 'topleft',
+    leafletClasses: true,
+    states: [{
+        stateName: 'center',
+        onClick: function(btn, map){
+            // create popup contents
+            // var matrix = JSON.parse(Cookies.get('mycorr'));
+            // var json_str = JSON.stringify(matrix);
+            // Cookies.set('mycorr', json_str);
+            utils.drawCorrelogram('mycorr');
+        },
+        title: 'Correlation Graph',
+        icon: '<i>☈</i>',
+    }]
+}).addTo(map);
+
+// document.getElementById("random_data_puller").click();
+// document.getElementById("corrButton").click();
+
+//-------------------------------------------------------
+
+var trainBtn = L.easyButton({
+    id: "trainButton",
+    position: 'topleft',
+    leafletClasses: true,
+    states: [{
+        stateName: 'center',
+        onClick: function(btn, map){
+            mlutils.run();
+        },
+        title: 'Train Model',
+        icon: '<i>&#9881;</i>',
+    }]
+}).addTo(map);
+
+
+var viewBtn = L.easyButton({
+    id: "viewButton",
+    position: 'topleft',
+    leafletClasses: true,
+    states: [{
+        stateName: 'center',
+        onClick: function(btn, map){
+            tfvis.visor().toggle();
+        },
+        title: 'View Window',
+        icon: '<i>ModelView</i>',
+    }]
+}).addTo(map);
+
+//-------------------------------------------------
+var storeBtn = L.easyButton({
+    id: "storeButton",
+    position: 'topleft',
+    leafletClasses: true,
+    states: [{
+        stateName: 'center',
+        onClick: function(btn, map){
+            var json_arr = window.jsonData;
+            // console.log("Storing");
+            // console.log(json_arr.length);
+            // console.log(json_arr[0]);
+            callIdb(json_arr);
+        },
+        title: 'Store Measurements',
+        icon: '<i>DB ⬇</i>',
+    }]
+}).addTo(map);
+
+/***
+ * https://stackoverflow.com/questions/54718446/objectstore-add-not-adding-data-with-different-key-in-indexeddb
+ * @param json_arr
+ */
+function callIdb(json_arr) {
+
+    window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+    window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction || {READ_WRITE: "readwrite"}; // This line should only be needed if it is needed to support the object's constants for older browsers
+    window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+
+    if (!window.indexedDB) {
+        console.log("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
+    } else {
+        console.log("You're good to go with IndexedDB");
+    };
+
+    var request = window.indexedDB.open("PerfDB", 1);
+
+    request.onerror = function(event) {
+        console.log("Hi, DB Open Failure.  Please Try again", event);
+    };
+
+
+    request.onupgradeneeded = function(event) {
+        console.log('(WINR.UGN)Within request.upgradeneeded');
+
+        var db = event.target.result;
+        console.log("(WINR.UGN) db:", db);
+
+        var oS = db.createObjectStore("dom_measurements", { keyPath: "timestamp" });
+        // oS.createIndex("name", "name", { unique: false });
+        // oS.createIndex("email", "email", { unique: true });
+        // oS.createIndex("age", "age", { unique: false });
+    };
+
+    request.onsuccess = function(event) {
+        console.log('(WOR.NS) Within request.onsuccess');
+        var db = event.target.result;
+        console.log("(WOR.NS) db= ", db);
+
+        var rTrans = db.transaction("dom_measurements", "readwrite").objectStore("dom_measurements");
+
+        json_arr.forEach(function(json_rec) {
+            rTrans.add(json_rec);
+            // console.log("You followed directions! Well done. var restaurant: ", json_rec, "stored with this transaction: ", rTrans);
+        });
+        rTrans.oncomplete = function () {
+            console.log("CONGRATULATIONS.");
+        }
+        rTrans.onerror = function () {
+            console.log("error in insertion to Idb.");
+        }
+    };
+
+    request.onupgradeneeded.onerror = function(event) {
+        console.log("err", event);
+    }
+}
+
+
+//-------------------------------------------------
+// But with the Performance APIs, we can get real user measurement (RUM) in production.
+//The downlink attribute represents the effective bandwidth estimate in megabits per second, rounded to nearest multiple of 25 kilobits per second, and is based on recently observed application layer throughput across recently active connections, excluding connections made to private address space [RFC1918].
+//connection.rtt: The rtt attribute represents the effective round-trip time estimate in milliseconds, rounded to nearest multiple of 25 milliseconds, and is based on recently observed application-layer RTT measurements across recently active connections, excluding connections made to private address space [RFC1918].
+// EffectiveDataTypesEnum - https://wicg.github.io/netinfo/#webidl-403640128
+//The PerformancePaintTiming interface of the Paint Timing API provides timing information about "paint" (also called "render") operations during web page construction. "Paint" refers to conversion of the render tree to on-screen pixels.
+//stateshapes[1].getResponseHeader('Content-Length')
+// https://blog.logrocket.com/rethinking-frontend-apm/
+// In modern single-page apps, performance is affected by a host of factors, including network requests, JavaScript execution, local resource access, CPU load, and memory usage. Slowness can be introduced from the backend, CDN layer, internet connectivity, JavaScript performance, or client device (iOS, Android, browser, etc.).
