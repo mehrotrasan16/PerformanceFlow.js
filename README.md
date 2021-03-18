@@ -10,8 +10,10 @@
 - [Main Features](#main-features)  
 - [How to run](#how_to_run)
 - [Project Structure](#project_structure)
-- [How to Generate Documentation](#docs)
-
+- [Where to Run PerfFlow.js](#where-to-use)   
+- [How to Run PerfFlow.js](#how-to-run)
+- [Discussion and Development](#dev)
+- [Contribution](#contri)
 
 # PerfFlow.js: a powerful javascript performance analysis module
 
@@ -36,20 +38,20 @@ It has been developed targeting  the [SUSTAIN](http://urban-sustain.org) groups 
         /dependencies     # index.html's dependencies
     /test         # where mocha test code lives
 
-# Where to use it
-# How to run <a name="how_to_run"></a>
+# Where to use it <a name="where-to-use"></a>
+# How to run <a name="how-to-run"></a>
 1. Clone the respository
 2. Navigate to the perfflow-js directory
 3. Run `npm install`
 4. Perform any clean-up or audit operations requested by NPM (not necessary, but good practice)
 6. The sample webserver can now be started with the `npm run serve` command
 
-# Discussion and Development
+# Discussion and Development <a name="dev"></a>
 Documents leading to the structure, architecture and planning for this module can be found [here](Folder-with-ppt-docs))
 
-# Contributing to PerfFlow
+# Contributing to PerfFlow <a name="contri"></a>
 All contributions, bug reports, bug fixes, documentation improvements, enhancements, and ideas are welcome.
 
-#### Licence [MIT](https://github.com/opensource9ja/danfojs/blob/master/LICENCE)
+#### Licence: [MIT](https://github.com/opensource9ja/danfojs/blob/master/LICENCE)
 
 #### Created by [Sanket Mehrotra](https://github.com/mehrotrasan16)
