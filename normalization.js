@@ -48,3 +48,7 @@ export function determineMeanAndStddev(data) {
 export function normalizeTensor(data, dataMean, dataStd) {
     return data.sub(dataMean).div(dataStd);
 }
+export function unnormalizeTensor(data, dataMean, dataStd) {
+    return data.mul(dataStd).add(dataMean);
+}
+

@@ -23,10 +23,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/data.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ml-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/ml-utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/normalization.js" beforeDir="false" afterPath="$PROJECT_DIR$/normalization.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +45,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="tfvis-screen" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -120,7 +122,7 @@
       <workItem from="1615307409775" duration="19274000" />
       <workItem from="1615673964659" duration="3035000" />
       <workItem from="1615911248527" duration="15043000" />
-      <workItem from="1616084041561" duration="6055000" />
+      <workItem from="1616084041561" duration="27202000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -192,7 +194,35 @@
       <option name="project" value="LOCAL" />
       <updated>1615913979172</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Added Readme and changed color and fill of loaded shapes to allow better visibility.">
+      <created>1616105145890</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1616105145890</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Added Readme banner image">
+      <created>1616105939372</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1616105939372</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Added Readme banner image, Many README changes">
+      <created>1616106819739</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1616106819739</updated>
+    </task>
+    <task id="LOCAL-00014" summary="README changes to TOC">
+      <created>1616107027807</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1616107027807</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -221,6 +251,10 @@
     <MESSAGE value="Backup before js restructuring (just a little)" />
     <MESSAGE value="JS - removed some commented code.&#10;Rachit bhai saved me by using promises to get all the data from my IDB function. &#10;added console log in case db insertion fails." />
     <MESSAGE value="Backup before adding k-fold training test function." />
-    <option name="LAST_COMMIT_MESSAGE" value="Backup before adding k-fold training test function." />
+    <MESSAGE value="Added Readme and changed color and fill of loaded shapes to allow better visibility." />
+    <MESSAGE value="Added Readme banner image" />
+    <MESSAGE value="Added Readme banner image, Many README changes" />
+    <MESSAGE value="README changes to TOC" />
+    <option name="LAST_COMMIT_MESSAGE" value="README changes to TOC" />
   </component>
 </project>

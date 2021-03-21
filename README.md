@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="images/perfjs-crop.png"><br>
+  <img src="images/perfflowjs-crop.png"><br>
 </div>
 
 -----------------
@@ -25,10 +25,10 @@ It has been developed targeting  the [SUSTAIN](http://urban-sustain.org) groups 
 
 # Main Features <a name="main-features"></a>
 
-- PerfFlow.js is fast. It is built on Tensorflow.js, and supports tensors out of the box.
+- PerfFlow.js is built on Tensorflow.js, with D3.js and Leaflet.js among other packages. 
 - It provides neat-looking correlograms to compare the correlation of the features that it captures.  
 - It provides functions to train Linear and Non-Linear Regression neural nets to determine the optimum load a device can and should be able to handle.
-- It is built for [*Leaflet.js*](https://github.com/Leaflet/Leaflet) and Uses Leaflet EasyButton to allow you to create your own custom buttons
+- It is built for [*Leaflet.js*](https://github.com/Leaflet/Leaflet) and Uses Leaflet EasyButton to allow you to create your own custom buttons to extend functionality.
 
 # Project Structure <a name="project_structure"></a>
     index.html    # main page of the client
