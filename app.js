@@ -342,7 +342,7 @@ var mybtn = L.easyButton({
             console.time("getLoadData")
             // clicked(this);
             // $.when(getLoadData(5)).then().then(mypagefn());
-            getCompoundData(5,1,0);
+            getCompoundData(2,1,10);
             console.timeEnd("getLoadData");
             // console.profileEnd();
             // console.log("mydataframe");
@@ -432,7 +432,8 @@ async function mypagefn() {
         "connectionType": EffectiveConnectionTypeDict[connection.effectiveType],
         "connectionMaxSpeed":connection.downlink,
         "JSmemoryUsed": mypageMemoryData.usedJSHeapSize,
-        "JStotalMemory": mypageMemoryData.totalJSHeapSize
+        "JStotalMemory": mypageMemoryData.totalJSHeapSize,
+        "deviceRAM": navigator.deviceMemory
     }
     jsonData.push(jsonrec);
 

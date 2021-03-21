@@ -31,8 +31,6 @@ export async function readIdb(){
                     console.log("No measurements taken yet.");
                 }
             };
-
-
         };
         request.onerror = function(event) {
             reject("Hi, DB Open Failure.  Please Try again", event);
@@ -60,6 +58,7 @@ export async function getData() {
         connectionMaxSpeed : entry.connectionMaxSpeed,
         connectionType: entry.connectionType,
         totalDataDownloaded : entry.totalDataDownloaded,
+        deviceRAM: entry.deviceRAM
     })).filter(entry => (entry.nodes != null && entry.resourceLoadingTime != null && entry.xmlHttpRequestLoadingTime != null && entry.JSmemoryUsed != null && entry.JStotalMemory != null && entry.totalDataDownloaded != null));
     return cleaned;
 }
@@ -67,24 +66,22 @@ export async function getData() {
 export async function run(){
     var data = await getData(); //await readIdb();
     const values = data.map(d => ({
-        x: [d.resourceLoadingTime,d.xmlHttpRequestLoadingTime,d.JSmemoryUsed,d.JStotalMemory,d.connectionMaxSpeed, d.connectionType,d.totalDataDownloaded],
+        x: [d.resourceLoadingTime,d.xmlHttpRequestLoadingTime,d.JSmemoryUsed,d.JStotalMemory,d.connectionMaxSpeed, d.connectionType,d.totalDataDownloaded,d.device],
         y: d.nodes
     }));
 
     // Create the model
-    // const model = createModel(); //createLinearRegressionModel();
-    // tfvis.show.modelSummary({name: 'Model Summary'}, model);
-
+    const model =  createLinearRegressionModel(); //createNonLinearRegressionModel();
     // Convert the performanceAnalyzerData to a form we can use for training.
-    // const tensorData = convertToTensor(data);
-    const multiTensorData = convertAllToTensor(data);
-    const {inputs, labels} = multiTensorData ;//tensorData;
-
+    const tensorData = convertToTensor(data);
+    const {inputs, labels} = tensorData;
+    const linsurface = { tab: 'Linear Reg Model'};//Date.now().toString() };
     // Train the model
-    //await trainModel(model, inputs, labels);
-    //console.log('Done Training');
+    await trainModel(model, inputs, labels,linsurface);
+    testModel(model, data, tensorData,linsurface);
 
-    // testModel(model, data, multiTensorData); //tensorData
+    //Non Linear Neural Net with JK fold cross validation.
+    const multiTensorData = convertAllToTensor(data);
     KFoldTrainTestModel(multiTensorData);
 }
 
@@ -93,7 +90,7 @@ export function createDemoModel() {
     const model = tf.sequential();
 
     // Add a single input layer
-    model.add(tf.layers.dense({inputShape: [7], units: 10, activation: 'tanh', useBias: true}));
+    model.add(tf.layers.dense({inputShape: [8], units: 10, activation: 'tanh', useBias: true}));
     model.add(tf.layers.dense({inputShape: [10], units: 10, activation: 'tanh', useBias: true}));
     model.add(tf.layers.dense({inputShape: [10], units: 10, activation: 'tanh', useBias: true}));
 
@@ -103,12 +100,14 @@ export function createDemoModel() {
     return model;
 }
 
+
+
 export function createModel() {
     // Create a sequential model
     const model = tf.sequential();
 
     // Add a single input layer
-    model.add(tf.layers.dense({inputShape: [7], units: 50, activation: 'tanh', useBias: true}));
+    model.add(tf.layers.dense({inputShape: [8], units: 50, activation: 'tanh', useBias: true}));
     model.add(tf.layers.dense({inputShape: [50], units: 50, activation: 'tanh', useBias: true}));
     model.add(tf.layers.dense({inputShape: [50], units: 10, activation: 'tanh', useBias: true}));
 
@@ -124,6 +123,21 @@ export function createLinearRegressionModel() {
 
     // Add a single input layer
     model.add(tf.layers.dense({inputShape: [1], units: 10, activation: 'relu', useBias: true}));
+    // model.add(tf.layers.dense({inputShape: [1], units: 10, activation: 'relu', useBias: true})); //single input for graph
+
+    // Add an output layer
+    model.add(tf.layers.dense({units: 1, useBias: true}));
+
+    return model;
+}
+export function createNonLinearRegressionModel() {
+    // Create a sequential model
+    const model = tf.sequential();
+
+    // Add a single input layer
+    model.add(tf.layers.dense({inputShape: [1], units: 10, activation: 'tanh', useBias: true})); //single input for graph
+    model.add(tf.layers.dense({inputShape: [10], units: 10, activation: 'tanh', useBias: true}));
+    model.add(tf.layers.dense({inputShape: [10], units: 10, activation: 'tanh', useBias: true}));
 
     // Add an output layer
     model.add(tf.layers.dense({units: 1, useBias: true}));
@@ -176,7 +190,7 @@ export function convertAllToTensor(data) {
         // Step 1. Shuffle the performanceAnalyzerData
         tf.util.shuffle(data);
         // Step 2. Convert performanceAnalyzerData to Tensor
-        tensors.rawTrainFeatures = tf.tensor2d(data.map(d => [d.resourceLoadingTime,d.xmlHttpRequestLoadingTime,d.JSmemoryUsed,d.JStotalMemory,d.connectionMaxSpeed, d.connectionType,d.totalDataDownloaded]));
+        tensors.rawTrainFeatures = tf.tensor2d(data.map(d => [d.resourceLoadingTime,d.xmlHttpRequestLoadingTime,d.JSmemoryUsed,d.JStotalMemory,d.connectionMaxSpeed, d.connectionType,d.totalDataDownloaded,d.deviceRAM]));
         tensors.rawTrainTarget = tf.tensor2d(data.map(d=> [d.nodes]));
         // tensors.rawTestFeatures = tf.tensor2d(bostonData.testFeatures);
         // tensors.testTarget = tf.tensor2d(bostonData.testTarget);
@@ -194,7 +208,7 @@ export function convertAllToTensor(data) {
 
         // Step 4.2 Normalize Tensor features
         tensors.trainFeatures = normalization.normalizeTensor(
-            tensors.rawTrainFeatures, dataMean, dataStd);
+             tensors.rawTrainFeatures, dataMean, dataStd);
 
         return {
             inputs: tensors.trainFeatures,  //inputTensor,
@@ -203,7 +217,7 @@ export function convertAllToTensor(data) {
     });
 }
 
-export async function trainModel(model, inputs, labels) {
+export async function trainModel(model, inputs, labels, surface) {
     // Prepare the model for training.
     var learningrate = 0.0001
     var compileoptions = {
@@ -211,16 +225,29 @@ export async function trainModel(model, inputs, labels) {
         loss: tf.losses.meanSquaredError,
         metrics: ['mse','mae'],
     }
-    console.log("Optimizer: " + compileoptions.optimizer.getClassName());
-    console.log("Learning Rate: " + learningrate);
-    console.log("Loss : " + compileoptions.loss.name);
-    console.log("Metrics: " + compileoptions.metrics);
+    // console.log("Optimizer: " + compileoptions.optimizer.getClassName());
+    // console.log("Learning Rate: " + learningrate);
+    // console.log("Loss : " + compileoptions.loss.name);
+    // console.log("Metrics: " + compileoptions.metrics);
+    const headers = [
+        'Optimizer',
+        'Learning Rate',
+        'Loss',
+        'Metrics'
+    ];
+
+    const values = [
+        [compileoptions.optimizer.getClassName(),learningrate,compileoptions.loss.name,compileoptions.metrics],
+    ];
+
+    // const surface = { name: 'Table', tab: 'Charts' };
+    tfvis.render.table({name: 'Model Hyperparameters',tab: surface.tab}, { headers, values });
 
     model.compile(compileoptions);
 
     // const batchSize = 2;
     const epochs = 50;
-    const surface = { tab: 'Model'+ Date.now().toString() };
+
     tfvis.show.modelSummary({name: 'Model Summary',tab: surface.tab}, model);
     return await model.fit(inputs, labels, {
         // batchSize,
@@ -228,50 +255,50 @@ export async function trainModel(model, inputs, labels) {
         shuffle: true,
         callbacks: tfvis.show.fitCallbacks(
             {name: 'Training Performance',tab:surface.tab},
-            ['loss', 'mse'],
+            ['loss', 'mse','mae'],
             { height: 200, callbacks: ['onEpochEnd'] }
         )
     });
 }
 
-// export function testModel(model, inputData, normalizationData) {
-//     const {inputMax, inputMin, labelMin, labelMax} = normalizationData;
-//     const [xs, preds] = tf.tidy(() => {
-//         const xs = tf.linspace(0,2, 7);
-//         const preds = model.predict(xs.reshape([7, 1]));
-//
-//         const unNormXs = xs
-//             .mul(inputMax.sub(inputMin))
-//             .add(inputMin);
-//
-//         const unNormPreds = preds
-//             .mul(labelMax.sub(labelMin))
-//             .add(labelMin);
-//
-//         // Un-normalize the performanceAnalyzerData
-//         return [unNormXs.dataSync(), unNormPreds.dataSync()];
-//     });
-//
-//     const predictedPoints = Array.from(xs).map((val, i) => {
-//         return {x: val, y: preds[i]}
-//     });
-//
-//     const originalPoints = inputData.map(d => ({
-//         x: d.resourceLoadingTime, y: d.nodes,
-//     }));
-//
-//     tfvis.render.scatterplot(
-//         {name: 'Model Predictions vs Original Data'},
-//         {values: [originalPoints, predictedPoints], series: ['original', 'predicted']},
-//         {
-//             xLabel: 'resourceLoadingTime',
-//             yLabel: 'Nodes',
-//             height: 300
-//         }
-//     );
-// }
+export function testModel(model, inputData, normalizationData, surface) {
+    const {inputMax, inputMin, labelMin, labelMax} = normalizationData;
+    const [xs, preds] = tf.tidy(() => {
+        const xs = tf.linspace(0,2, 7);
+        const preds = model.predict(xs.reshape([7, 1]));
 
-export function testModel(model, inputs, labels) {
+        const unNormXs = xs
+            .mul(inputMax.sub(inputMin))
+            .add(inputMin);
+
+        const unNormPreds = preds
+            .mul(labelMax.sub(labelMin))
+            .add(labelMin);
+
+        // Un-normalize the performanceAnalyzerData
+        return [unNormXs.dataSync(), unNormPreds.dataSync()];
+    });
+
+    const predictedPoints = Array.from(xs).map((val, i) => {
+        return {x: val, y: preds[i]}
+    });
+
+    const originalPoints = inputData.map(d => ({
+        x: d.resourceLoadingTime, y: d.nodes,
+    }));
+
+    tfvis.render.scatterplot(
+        {name: 'Model Predictions vs Original Data', tab: surface.tab},
+        {values: [originalPoints, predictedPoints], series: ['original', 'predicted']},
+        {
+            xLabel: 'resourceLoadingTime',
+            yLabel: 'Nodes',
+            height: 300
+        }
+    );
+}
+
+export function KfoldtestModel(model, inputs, labels,surface) {
     const result = model.evaluate(
         inputs, labels); //third arg : {batchSize: BATCH_SIZE}
     // debugger
@@ -281,6 +308,17 @@ export function testModel(model, inputs, labels) {
     testaccs.push([parseFloat(testMSE),parseFloat(testMAE)]);
     console.log("Test MSE, Test MAE")
     console.log(testMSE,testMAE);
+    const headers = [
+        'Test MSE',
+        'Test MAE',
+    ];
+
+    const values = [
+        [testMSE,testMAE],
+    ];
+
+    tfvis.render.table({name: 'Model Testing Results',tab: surface.tab}, { headers, values });
+
     return testMSE,testMAE;
 }
 
@@ -293,8 +331,8 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
         .from(Array(number + 1), (_, i) => i)
         .filter(i => number % i === 0)
 
-    if(inputs.shape[0]%2 != 0){
-        var evenindex = Math.floor(inputs.shape[0]/2)*2
+    if(inputs.shape[0]%10 != 0){
+        var evenindex = Math.floor(inputs.shape[0]/10)*10
         eveninputs = inputs.slice(0,evenindex);
         evenlabels = labels.slice(0,evenindex);
     }
@@ -303,7 +341,7 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
         inputs = eveninputs;
         labels = evenlabels;
     }
-    num_splits = factors(inputs.shape[0]).indexOf(10) != -1 ? 10 : 8 ;
+    num_splits = 10//factors(inputs.shape[0]).indexOf(10) != -1 ? 10 : 8 ;
 
     console.log(inputs.shape[0]);
     console.log(num_splits)
@@ -312,6 +350,9 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
     klabels = labels.split(num_splits, 0);
 
     for(var index=0; index < num_splits; index++){
+        //Create TFVis Surface Visor Tab
+        //TFVis Surface to print in Slideout panel
+        const surface = { tab: 'K fold Model #'+ index.toString()};//Date.now().toString() };
         const model = createDemoModel(); //createModel();
         var test = kgroups[index];
         var testlabels = klabels[index];
@@ -319,7 +360,7 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
         var trainlabels = klabels.slice();
         trainlabels.splice(index,1);
         train.splice(index,1);
-        console.log(index);
+        // console.log(index);
         // console.log("test");
         // console.log(test.shape);
         // console.log("train");
@@ -333,66 +374,26 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
         }
         // console.log(combinedtrain.shape);
         // console.log(combinedlabels.shape);
-        await trainModel(model,combinedtrain,combinedlabels);
+        await trainModel(model,combinedtrain,combinedlabels,surface);
         // console.log('Done Training');
-        testModel(model, test, testlabels);
+        KfoldtestModel(model, test, testlabels, surface);
 
         // console.log(t1,t2,t3);
-        // //Saving the model
-        // var d = new Date();
-        // var model_name = "model_" + d.getHours().toString() + d.getMinutes().toString() + d.getSeconds().toString() +  ;
-        // const saveResult = await model.save('downloads://'+model_name);
-    }
+        if(index === num_splits-1 ) {
+            const [preds] = tf.tidy(() => {
+                var randi = Math.floor(Math.random() * test.shape[0]);
+                var xs = test.slice(randi-1,1);
+                const preds = model.predict(xs);
+                return preds.dataSync();
+            });
+            alert("Your System can Handle: " + Math.floor(preds.toString()) + " points");
 
-    //      trainacc.append(trainmodel(model,train,trainlab))
-    //      testacc.append(testmodel(model,test,testlabels))
-    // debugger;
+            //Saving the model
+            var d = new Date();
+            var model_name = "model_" + d.getHours().toString() + d.getMinutes().toString() + d.getSeconds().toString() + index.toString();
+            const saveResult = await model.save('downloads://' + model_name);
+        }
+    }
     console.log("K fold Test MSE Values.")
     console.log(testaccs);
-
-}
-
-window.testaccs = testaccs;
-
-// util function to normalize a value between a given range.
-function normalize(value, min, max) {
-    if (min === undefined || max === undefined) {
-        return value;
-    }
-    return (value - min) / (max - min);
-}
-
-const multiFeatureTransform = (data,xs,ys) =>{
-
-    // Step 1. Shuffle the performanceAnalyzerData
-    tf.util.shuffle(data);
-    // Step 2. Convert performanceAnalyzerData to Tensor
-    const resourceLoadingTimes = data.map(d => d.resourceLoadingTime)
-    const XHRLoadingTimes = data.map(d => d.xmlHttpRequestLoadingTime)
-    const labels = data.map(d => d.nodes);
-
-    const inputTensor = tf.tensor2d(inputs, [inputs.length, 1]);
-    const labelTensor = tf.tensor2d(labels, [labels.length, 1]);
-
-    //Step 3. Normalize the performanceAnalyzerData to the range 0 - 1 using min-max scaling
-    const inputMax = inputTensor.max();
-    const inputMin = inputTensor.min();
-    const labelMax = labelTensor.max();
-    const labelMin = labelTensor.min();
-
-    const normalizedInputs = inputTensor.sub(inputMin).div(inputMax.sub(inputMin));
-    const normalizedLabels = labelTensor.sub(labelMin).div(labelMax.sub(labelMin));
-
-    return {
-        inputs: normalizedInputs,  //inputTensor,
-        labels: normalizedLabels, //labelTensor,
-        // Return the min/max bounds so we can use them later.
-        inputMax,
-        inputMin,
-        labelMax,
-        labelMin,
-    }
-    const values = [
-
-    ]
 }
