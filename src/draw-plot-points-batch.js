@@ -3,7 +3,8 @@ var LD = require('leaflet-draw')
 var Lfullscreen = require('leaflet-fullscreen')
 var MiniMap = require('leaflet-minimap');
 //var markercluster = require('leaflet-markercluster');
-var utils = require('./utils.js');
+
+var utils = require('../utils.js');
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
@@ -13,7 +14,7 @@ var center = [40.5853, -105.0844];
 
 // Create the map
 var map = L.map('map');
-map.setView(center, 5);
+map.setView(center, 6);
 
 var tiles = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 // Set up the OSM layer
@@ -27,19 +28,6 @@ mainlayer.addTo(map);
 //Add the map scale
 L.control.scale().addTo(map);
 
-//////////////////////////////On click interactivity
-var popup = L.popup();
-function onMapClick(e) {
-    map.flyTo(e.latlng);
-    popup
-        .setLatLng(e.latlng)
-        .setContent("<strong>" + e.latlng.lat.toFixed(2).toString() + "," + e.latlng.lng.toFixed(2).toString() + "</strong>")
-        .openOn(map);
-    //breadcrumb update
-}
-
-map.on("click", onMapClick);
-/////////////////////////////END on click interactivity
 
 //////////////////////////DRAW CONTROL ON THE MAP
 
@@ -131,7 +119,7 @@ map.on('fullscreenchange', function () {
 // //////////////////////////END Minimap CONTROL ON THE MAP
 
 /*Performance check by adding large  number of circle markers*/
-////////////// control that shows state info on hover
+// control that shows state info on hover
 var info = L.control();
 
 info.onAdd = function (map) {
@@ -145,16 +133,15 @@ info.update = function (props,state="") {
 };
 
 info.addTo(map);
-////////////END control that shows state info on hover
 
 const starttime = Date.now();
 var preplotpoints = [];
-for(i = 0; i < 150;i++){
-    var fig = utils.getRandomGeoJson(map,"Polygon",10)
-//    if(preplotpoints.indexOf(fig) === -1) preplotpoints.push(fig); //unique lines condition
-    preplotpoints.push(fig);
-    editableLayers.addLayer(L.geoJSON(fig));
-    if(i % 50000 === 0){
+for(i = 0; i < 25000;i++){
+    var point = utils.getRandomLatLng(map)
+    if(preplotpoints.indexOf(point) === -1) preplotpoints.push(point);
+    var marker = new L.circle(preplotpoints[i]);
+    map.addLayer(marker);
+    if(i % 1000 === 0){
         console.log(i);
     }
 }

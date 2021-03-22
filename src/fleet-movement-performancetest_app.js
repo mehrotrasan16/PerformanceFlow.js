@@ -1,10 +1,16 @@
+
+/*
+Author: Sanket M
+References:
+1. http://kuanbutts.com/2019/08/31/mbgl-vs-leaflet/
+2. https://makerlog.org/posts/leaflet-basics
+*/
+
 var L = require('leaflet');
 var LD = require('leaflet-draw')
 var Lfullscreen = require('leaflet-fullscreen')
 var MiniMap = require('leaflet-minimap');
-//var markercluster = require('leaflet-markercluster');
-
-var drawControlimport = require('./utils.js');
+var utils = require('../utils.js');
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
@@ -94,8 +100,7 @@ map.on("draw:created", function (e) {
 });
 //////////////////////////END DRAW CONTROL ON THE MAP
 
-
-//////////////////////////start fullscreen CONTROL ON THE MAP
+//fullscreen control
 map.addControl(new L.Control.Fullscreen());
 map.on('fullscreenchange', function () {
     if (map.isFullscreen()) {
@@ -107,52 +112,73 @@ map.on('fullscreenchange', function () {
         fscrinfo.remove();
     }
 });
-//////////////////////////end fullscreen CONTROL ON THE MAP
 
-// //////////////////////////START Minimap CONTROL ON THE MAP
-// var osmUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"; //"http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-// var osmAttrib = "Map data &copy; OpenStreetMap contributors";
-// //Minimap Plugin magic goes here! Note that you cannot use the same layer object again, as that will confuse the two map controls
-// var osm2 = new L.TileLayer(osmUrl, { minZoom: 0, maxZoom: 11 });
-// var minimap_options={ toggleDisplay: true, width: 200, height: 200, collapsedHeight:19,collapsedWidth:19,zoomOffset:map.getZoom()-1 }
-// var miniMap = new L.Control.MiniMap(osm2,minimap_options).addTo(map);
-// //////////////////////////END Minimap CONTROL ON THE MAP
+
+//Minimap control
+var osmUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}"; //"http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+var osmAttrib = "Map data &copy; OpenStreetMap contributors";
+//Minimap Plugin magic goes here! Note that you cannot use the same layer object again, as that will confuse the two map controls
+var osm2 = new L.TileLayer(osmUrl, { minZoom: 0, maxZoom: 11 });
+var minimap_options={ toggleDisplay: true, width: 200, height: 200, collapsedHeight:19,collapsedWidth:19,zoomOffset:map.getZoom()-1 }
+var miniMap = new L.Control.MiniMap(osm2,minimap_options).addTo(map);
+// new MiniMap(layer, options).addTo(map);
 
 /*Performance check by adding large  number of circle markers*/
 // control that shows state info on hover
 var info = L.control();
 
 info.onAdd = function (map) {
-    this._div = L.DomUtil.create("div", "info legend");
+    this._div = L.DomUtil.create("div", "info");
     this.update();
     return this._div;
 };
 
-info.update = function (props,state="") {
-    this._div.innerHTML = "<h4>Test: </h4>" + (props ? "<b>" + props.name.toString() +", " + props.timestamp.toString() + " ms</b><br />" : "Starting Experiment");
+info.update = function (string,state="") {
+    this._div.innerHTML = "<h4>"+ string +" dots</h4>" //"<h4>US Population Density</h4>" + (props ? "<b>" + props.name +", " + props.state + "</b><br />" + props.density + " people / mi<sup>2</sup>" : "Hover over a state");
 };
 
 info.addTo(map);
 
-const starttime = Date.now();
-var preplotpoints = [];
-for(i = 0; i < 250000;i++){
-    var point = drawControlimport.getRandomLatLng(map)
-    if(preplotpoints.indexOf(point) === -1) preplotpoints.push(point);
-    var marker = new L.circle(preplotpoints[i]);
-    map.addLayer(marker);
-    if(i % 1000 === 0){
-        console.log(i);
-    }
-}
-updateProps = {
-    name: preplotpoints.length,
-    timestamp: Date.now() - starttime,
-};
-info.update(updateProps);
-console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes" + (Date.now() - starttime).toString() +"ms ");
-console.log(" plotting "+ preplotpoints.length.toString() +"stored points takes" + performance.memory.usedJSHeapSize.toString + "ms ");
+const allCircles = [];
 
+const circlesUpdater = setInterval(() => {
+    allCircles.forEach(circleMeta => {
+        const ll = circleMeta.circle.getLatLng();
+
+        const earthRadius = 6378;
+        const dy = 0.01 * circleMeta.theta;
+        const dx = 0.01 * circleMeta.theta;
+        const degreeFactor = circleMeta.theta * 180;
+        const newLat = ll.lat + (dy/earthRadius) * (degreeFactor/Math.PI);
+        const newLng = ll.lng + (dx/earthRadius) * (degreeFactor/Math.PI) / Math.cos(ll.lat * Math.PI/degreeFactor);
+
+        const newPos = new L.LatLng(newLat,newLng);
+        if (map.getBounds().contains(newPos)){
+            circleMeta.circle.setLatLng(newPos);
+        }
+        else{
+            circleMeta.circle.setLatLng(utils.getRandomLatLng(map));
+        }
+    });
+
+    //document.getElementById('info').textContent = `${allCircles.length} dots`;
+    info.update(allCircles.length);
+
+    if (allCircles.length > 2000) {
+        clearInterval(circlesUpdater);
+    }
+    const newCircle = L.circle(utils.getRandomLatLng(map), 50, {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5
+    }).addTo(map);
+
+    allCircles.push({
+        circle: newCircle,
+        theta: (Math.random() * 2) - 1,
+    });
+
+},5)
 
 module.exports = {
     map

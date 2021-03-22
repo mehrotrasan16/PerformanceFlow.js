@@ -1,16 +1,10 @@
-
-/*
-Author: Sanket M
-References:
-1. http://kuanbutts.com/2019/08/31/mbgl-vs-leaflet/
-2. https://makerlog.org/posts/leaflet-basics
-*/
-
 var L = require('leaflet');
 var LD = require('leaflet-draw')
 var Lfullscreen = require('leaflet-fullscreen')
 var MiniMap = require('leaflet-minimap');
-var utils = require('./utils.js');
+//var markercluster = require('leaflet-markercluster');
+
+var utils = require('../utils.js');
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 
@@ -128,43 +122,31 @@ var miniMap = new L.Control.MiniMap(osm2,minimap_options).addTo(map);
 var info = L.control();
 
 info.onAdd = function (map) {
-    this._div = L.DomUtil.create("div", "info");
+    this._div = L.DomUtil.create("div", "info legend");
     this.update();
     return this._div;
 };
 
-info.update = function (string,state="") {
-    this._div.innerHTML = "<h4>"+ string +" dots</h4>" //"<h4>US Population Density</h4>" + (props ? "<b>" + props.name +", " + props.state + "</b><br />" + props.density + " people / mi<sup>2</sup>" : "Hover over a state");
+info.update = function (props,state="") {
+    this._div.innerHTML = "<h4>Test: </h4>" + (props ? "<b>" + props.name.toString() +", " + props.timestamp.toString() + " ms</b><br />" : "Starting Experiment");
 };
 
 info.addTo(map);
 
 const allCircles = [];
-
+var circlecounter = 0;
+const startTime = Date.now();
 const circlesUpdater = setInterval(() => {
     allCircles.forEach(circleMeta => {
-        const ll = circleMeta.circle.getLatLng();
-
-        const earthRadius = 6378;
-        const dy = 0.01 * circleMeta.theta;
-        const dx = 0.01 * circleMeta.theta;
-        const degreeFactor = circleMeta.theta * 180;
-        const newLat = ll.lat + (dy/earthRadius) * (degreeFactor/Math.PI);
-        const newLng = ll.lng + (dx/earthRadius) * (degreeFactor/Math.PI) / Math.cos(ll.lat * Math.PI/degreeFactor);
-
-        const newPos = new L.LatLng(newLat,newLng);
-        if (map.getBounds().contains(newPos)){
-            circleMeta.circle.setLatLng(newPos);
-        }
-        else{
-            circleMeta.circle.setLatLng(utils.getRandomLatLng(map));
-        }
     });
 
-    //document.getElementById('info').textContent = `${allCircles.length} dots`;
-    info.update(allCircles.length);
+    updateProps = {
+        name: allCircles.length,
+        timestamp: Date.now() - startTime,
+    };
+    info.update(updateProps);
 
-    if (allCircles.length > 2000) {
+    if (circlecounter > 2000) {
         clearInterval(circlesUpdater);
     }
     const newCircle = L.circle(utils.getRandomLatLng(map), 50, {
@@ -173,11 +155,15 @@ const circlesUpdater = setInterval(() => {
         fillOpacity: 0.5
     }).addTo(map);
 
+    circlecounter++;
+
     allCircles.push({
         circle: newCircle,
-        theta: (Math.random() * 2) - 1,
+        theta: 1// (Math.random() * 2) - 1,
     });
-
+    if(allCircles.length % 100 == 0){
+        console.log("Plotting " + allCircles.length.toString() + " takes "+ (Date.now() - startTime).toString() + "ms" );
+    }
 },5)
 
 module.exports = {

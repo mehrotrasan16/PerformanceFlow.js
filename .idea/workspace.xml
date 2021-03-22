@@ -24,11 +24,9 @@
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/data.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ml-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/ml-utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/normalization.js" beforeDir="false" afterPath="$PROJECT_DIR$/normalization.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +43,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="tfvis-screen" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -87,6 +85,7 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Temp\benchmarkingBD\leaflet-webapp\backups" />
+      <recent name="D:\Temp\benchmarkingBD\leaflet-webapp\src" />
     </key>
   </component>
   <component name="RunManager">
@@ -123,6 +122,8 @@
       <workItem from="1615673964659" duration="3035000" />
       <workItem from="1615911248527" duration="15043000" />
       <workItem from="1616084041561" duration="27202000" />
+      <workItem from="1616358798076" duration="553000" />
+      <workItem from="1616359513218" duration="2004000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -222,7 +223,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616107027807</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Restructured files and README.md changes.">
+      <created>1616390905254</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1616390905254</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -255,6 +263,7 @@
     <MESSAGE value="Added Readme banner image" />
     <MESSAGE value="Added Readme banner image, Many README changes" />
     <MESSAGE value="README changes to TOC" />
-    <option name="LAST_COMMIT_MESSAGE" value="README changes to TOC" />
+    <MESSAGE value="Restructured files and README.md changes." />
+    <option name="LAST_COMMIT_MESSAGE" value="Restructured files and README.md changes." />
   </component>
 </project>
