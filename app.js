@@ -444,7 +444,7 @@ async function mypagefn() {
     window.jsonData = jsonData;
     var json_str = JSON.stringify(mydata);
     Cookies.set('mydata',json_str);
-    var json_str = JSON.stringify(jsonData);
+    json_str = JSON.stringify(jsonData);
     Cookies.set('jsonData',json_str);
 
     return mydata;
@@ -538,7 +538,7 @@ function callIdb(json_arr) {
         console.log("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
     } else {
         console.log("You're good to go with IndexedDB");
-    };
+    }
 
     var request = window.indexedDB.open("PerfDB", 1);
 

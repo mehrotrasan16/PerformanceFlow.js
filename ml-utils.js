@@ -1,12 +1,7 @@
-const Cookies = require('js-cookie');
+// const Cookies = require('js-cookie');
 var tfvis = require('@tensorflow/tfjs-vis');
 var tf = require('@tensorflow/tfjs');
 var normalization = require('./normalization.js');
-
-// Some hyperparameters for model training.
-const NUM_EPOCHS = 200;
-const BATCH_SIZE = 40;
-const LEARNING_RATE = 0.01;
 var testaccs = [];
 
 
@@ -41,10 +36,10 @@ export async function readIdb(){
 }
 
 export async function getData() {
-    const mydata = JSON.parse(Cookies.get('mydata'));
+    // const mydata = JSON.parse(Cookies.get('mydata'));
     // console.log("mydata Data");
     // console.log(mydata)
-    const perfData = JSON.parse(Cookies.get('jsonData'));
+    // const perfData = JSON.parse(Cookies.get('jsonData'));
     // console.log("json Cookie Data");
     // console.log(perfData)
 
@@ -327,11 +322,12 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
     var {inputs, labels} = normalizedShuffledData ;
     var kgroups,klabels,eveninputs,evenlabels,num_splits;
 
-    const factors = number => Array
-        .from(Array(number + 1), (_, i) => i)
-        .filter(i => number % i === 0)
+    //calculate factors - part of the evenly divisible number (old K splits logic)
+    // const factors = number => Array
+    //     .from(Array(number + 1), (_, i) => i)
+    //     .filter(i => number % i === 0)
 
-    if(inputs.shape[0]%10 != 0){
+    if(inputs.shape[0]%10 !== 0){
         var evenindex = Math.floor(inputs.shape[0]/10)*10
         eveninputs = inputs.slice(0,evenindex);
         evenlabels = labels.slice(0,evenindex);

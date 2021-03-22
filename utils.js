@@ -347,6 +347,6 @@ function drawCorrelogram(cookiename) {
     });
 
     Cookies.remove(cookiename);
-};
+}
 
 exports.drawCorrelogram = drawCorrelogram;
