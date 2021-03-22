@@ -8,7 +8,7 @@ var MiniMap = require('leaflet-minimap');
 var colotracts = require('../us_counties_geojson/colo_tracts')
 //var markercluster = require('leaflet-markercluster');
 
-var utils = require('./utils.js');
+var utils = require('../utils.js');
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
 

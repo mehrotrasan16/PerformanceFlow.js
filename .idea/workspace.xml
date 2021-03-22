@@ -26,9 +26,15 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ml-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/ml-utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/normalization.js" beforeDir="false" afterPath="$PROJECT_DIR$/normalization.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/async-state-load-plot-geojson.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/async-state-load-plot-geojson.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/batch-points-with-delay.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/batch-points-with-delay.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbAccess.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/dbAccess.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw-and-plot-batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw-and-plot-batch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw-plot-points-batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw-plot-points-batch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/draw-plot-shapes-batch.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/draw-plot-shapes-batch.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fleet-movement-performancetest_app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/fleet-movement-performancetest_app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pre-stored-shapes-backup.js" beforeDir="false" afterPath="$PROJECT_DIR$/backups/pre-stored-shapes-backup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pre-stored-shapes.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pre-stored-shapes.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +51,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="tfvis-screen" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -87,6 +93,7 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\Temp\benchmarkingBD\leaflet-webapp\backups" />
+      <recent name="D:\Temp\benchmarkingBD\leaflet-webapp\src" />
     </key>
   </component>
   <component name="RunManager">
@@ -123,6 +130,8 @@
       <workItem from="1615673964659" duration="3035000" />
       <workItem from="1615911248527" duration="15043000" />
       <workItem from="1616084041561" duration="27202000" />
+      <workItem from="1616358798076" duration="553000" />
+      <workItem from="1616359513218" duration="1527000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>

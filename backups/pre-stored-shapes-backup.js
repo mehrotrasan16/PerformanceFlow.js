@@ -2,7 +2,7 @@ var L = require('leaflet');
 var LD = require('leaflet-draw')
 var Lfullscreen = require('leaflet-fullscreen')
 var MiniMap = require('leaflet-minimap');
-var utils = require('./utils.js');
+var utils = require('../utils.js');
 var LAjax = require('leaflet-ajax');
 
 

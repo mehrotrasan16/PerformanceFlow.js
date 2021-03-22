@@ -7,7 +7,7 @@ var easybutton = require('leaflet-easybutton');
 const Cookies = require('js-cookie'); //assign module to variable called "Cookies"
 var mlutils = require("./ml-utils");
 var data = require("./data.js");
-var db = require("./dbAccess.js");
+var db = require("./src/dbAccess.js");
 var tfvis = require('@tensorflow/tfjs-vis')
 
 L.Icon.Default.imagePath = 'node_modules/leaflet/dist/images/';
