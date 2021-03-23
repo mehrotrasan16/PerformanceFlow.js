@@ -301,8 +301,8 @@ export function KfoldtestModel(model, inputs, labels,surface) {
     const testMSE = result[1].dataSync();
     const testMAE = result[2].dataSync();
     testaccs.push([parseFloat(testMSE),parseFloat(testMAE)]);
-    console.log("Test MSE, Test MAE")
-    console.log(testMSE,testMAE);
+    // console.log("Test MSE, Test MAE")
+    // console.log(testMSE,testMAE);
     const headers = [
         'Test MSE',
         'Test MAE',
@@ -318,7 +318,7 @@ export function KfoldtestModel(model, inputs, labels,surface) {
 }
 
 export async function KFoldTrainTestModel(normalizedShuffledData) {
-    console.log("KFoldTrainTestModel()")
+    // console.log("KFoldTrainTestModel()")
     var {inputs, labels} = normalizedShuffledData ;
     var kgroups,klabels,eveninputs,evenlabels,num_splits;
 
@@ -339,9 +339,9 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
     }
     num_splits = 10//factors(inputs.shape[0]).indexOf(10) != -1 ? 10 : 8 ;
 
-    console.log(inputs.shape[0]);
-    console.log(num_splits)
-    console.log(inputs.split(num_splits, 0));
+    // console.log(inputs.shape[0]);
+    // console.log(num_splits)
+    // console.log(inputs.split(num_splits, 0));
     kgroups = inputs.split(num_splits, 0);
     klabels = labels.split(num_splits, 0);
 
@@ -376,13 +376,15 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
 
         // console.log(t1,t2,t3);
         if(index === num_splits-1 ) {
-            const [preds] = tf.tidy(() => {
-                var randi = Math.floor(Math.random() * test.shape[0]);
-                var xs = test.slice(randi-1,1);
-                const preds = model.predict(xs);
-                return preds.dataSync();
-            });
-            alert("Your System can Handle: " + Math.floor(preds.toString()) + " points");
+            // const [preds] = tf.tidy(() => {
+            //     var randi = Math.floor(Math.random() * test.shape[0]);
+            //     var xs = test.slice(randi-1,1);
+            //     const preds = model.predict(xs);
+            //     return preds.dataSync();
+            // });
+            let average = (array) => array.reduce((a, b) => a + b) / array.length;
+            debugger;
+            alert("Your System can Handle: " + (Math.floor(average(testaccs))*100000).toString() + " points");
 
             //Saving the model
             var d = new Date();
@@ -390,6 +392,6 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
             const saveResult = await model.save('downloads://' + model_name);
         }
     }
-    console.log("K fold Test MSE Values.")
-    console.log(testaccs);
+    // console.log("K fold Test MSE Values.")
+    // console.log(testaccs);
 }
