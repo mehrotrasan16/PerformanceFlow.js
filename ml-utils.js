@@ -376,15 +376,15 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
 
         // console.log(t1,t2,t3);
         if(index === num_splits-1 ) {
-            // const [preds] = tf.tidy(() => {
-            //     var randi = Math.floor(Math.random() * test.shape[0]);
-            //     var xs = test.slice(randi-1,1);
-            //     const preds = model.predict(xs);
-            //     return preds.dataSync();
-            // });
+            const preds = tf.tidy(() => {
+                var randi = Math.floor(Math.random() * test.shape[0]);
+                var xs = test.slice(randi-1,1);
+                const preds = model.predict(xs);
+                return preds.dataSync();
+            });
             let average = (array) => array.reduce((a, b) => a + b) / array.length;
             debugger;
-            alert("Your System can Handle: " + (Math.floor(average(testaccs))*100000).toString() + " points");
+            alert("Your System can Handle: " + Math.floor(preds*100000).toString() + " points");
 
             //Saving the model
             var d = new Date();
