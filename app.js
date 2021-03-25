@@ -342,7 +342,7 @@ var mybtn = L.easyButton({
             console.time("getLoadData")
             // clicked(this);
             // $.when(getLoadData(5)).then().then(mypagefn());
-            getCompoundData(2,1,10);
+            getCompoundData(1,1,7);
             console.timeEnd("getLoadData");
             // console.profileEnd();
             // console.log("mydataframe");

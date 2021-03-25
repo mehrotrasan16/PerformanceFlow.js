@@ -24,8 +24,8 @@
   <component name="ChangeListManager">
     <list default="true" id="c9009f67-b13d-47ce-b1ef-129fe530c014" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ml-utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/ml-utils.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +123,7 @@
       <workItem from="1616084041561" duration="27202000" />
       <workItem from="1616358798076" duration="553000" />
       <workItem from="1616359513218" duration="3646000" />
-      <workItem from="1616514808025" duration="12437000" />
+      <workItem from="1616514808025" duration="21082000" />
     </task>
     <task id="LOCAL-00001" summary="added performance observer to get some useful network metrics/info.&#10;added a few more network related calculations via the performance-timing-google-chrome-extension chrome extension github repo.&#10;removed older pupp + tracelyzer function&#10;Added web-vitals code to get web.dev important metrics like time to first byte, first contentfule paing and CLS. &#10;experimenting with console.time/endTime(works for js that I care about) and console.profile/profileEnd(works in Firefox)">
       <created>1613262394076</created>
@@ -244,7 +244,14 @@
       <option name="project" value="LOCAL" />
       <updated>1616515110754</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="wrote a line to try to validate my model's output.">
+      <created>1616625895593</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1616625895593</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -280,6 +287,7 @@
     <MESSAGE value="Restructured files and README.md changes." />
     <MESSAGE value="Reduced a few warnings in app, ml utils, utils files." />
     <MESSAGE value="Commented all console.log statements in ml-utils to clean up messages." />
-    <option name="LAST_COMMIT_MESSAGE" value="Commented all console.log statements in ml-utils to clean up messages." />
+    <MESSAGE value="wrote a line to try to validate my model's output." />
+    <option name="LAST_COMMIT_MESSAGE" value="wrote a line to try to validate my model's output." />
   </component>
 </project>

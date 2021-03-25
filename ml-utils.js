@@ -4,6 +4,7 @@ var tf = require('@tensorflow/tfjs');
 var normalization = require('./normalization.js');
 var testaccs = [];
 
+var lblmin, lblmax;
 
 export async function readIdb(){
 
@@ -197,6 +198,8 @@ export function convertAllToTensor(data) {
 
         const labelMax = tensors.rawTrainTarget.max();
         const labelMin = tensors.rawTrainTarget.min();
+        lblmax = labelMax.dataSync();
+        lblmin = labelMin.dataSync();
 
         //Step 4.1 Normalize Target values
         const normalizedLabels = tensors.rawTrainTarget.sub(labelMin).div(labelMax.sub(labelMin));
@@ -207,7 +210,7 @@ export function convertAllToTensor(data) {
 
         return {
             inputs: tensors.trainFeatures,  //inputTensor,
-            labels: normalizedLabels, //labelTensor,
+            labels:  normalizedLabels, //labelTensor, tensors.rawTrainTarget
         }
     });
 }
@@ -241,7 +244,7 @@ export async function trainModel(model, inputs, labels, surface) {
     model.compile(compileoptions);
 
     // const batchSize = 2;
-    const epochs = 50;
+    const epochs = 20;
 
     tfvis.show.modelSummary({name: 'Model Summary',tab: surface.tab}, model);
     return await model.fit(inputs, labels, {
@@ -349,7 +352,7 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
         //Create TFVis Surface Visor Tab
         //TFVis Surface to print in Slideout panel
         const surface = { tab: 'K fold Model #'+ index.toString()};//Date.now().toString() };
-        const model = createDemoModel(); //createModel();
+        const model = createModel();//createDemoModel();
         var test = kgroups[index];
         var testlabels = klabels[index];
         var train = kgroups.slice();
@@ -376,15 +379,16 @@ export async function KFoldTrainTestModel(normalizedShuffledData) {
 
         // console.log(t1,t2,t3);
         if(index === num_splits-1 ) {
-            const preds = tf.tidy(() => {
+            const [preds,realpreds] = tf.tidy(() => {
                 var randi = Math.floor(Math.random() * test.shape[0]);
                 var xs = test.slice(randi-1,1);
                 const preds = model.predict(xs);
-                return preds.dataSync();
+                var rawpoints = (preds.mul(lblmax - lblmin)).add(lblmin);
+                return [preds.dataSync(),rawpoints.dataSync()];
             });
             let average = (array) => array.reduce((a, b) => a + b) / array.length;
-            debugger;
-            alert("Your System can Handle: " + Math.floor(preds*100000).toString() + " points");
+            console.log(preds,realpreds)
+            alert("Your System can Handle: " + Math.floor(realpreds).toString() + " points");
 
             //Saving the model
             var d = new Date();
